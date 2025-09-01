@@ -1,15 +1,10 @@
 //! Support for attaching to Unity games that are using the standard Mono
 //! backend.
 
+use alloc::format;
 #[cfg(feature = "alloc")]
 use crate::file_format::macho;
-use crate::{
-    file_format::{elf, pe},
-    future::retry,
-    signature::Signature,
-    string::ArrayCString,
-    Address, Address32, Address64, Error, PointerSize, Process,
-};
+use crate::{file_format::{elf, pe}, future::retry, print_message, signature::Signature, string::ArrayCString, Address, Address32, Address64, Error, PointerSize, Process};
 use core::{
     array,
     cell::RefCell,
@@ -57,8 +52,13 @@ impl Module {
             ("libmonobdwgc-2.0.dylib", BinaryFormat::MachO),
         ]
         .into_iter()
-        .find_map(|(name, format)| Some((process.get_module_range(name).ok()?, format)))?;
+        .find_map(|(name, format)| {
+            // print_message(&format!("{}", name));//113E12000
+            Some((process.get_module_range(name).ok()?, format))
+        })?;
+        // let module_range = (Address::from(0x113e24000_u64), 0x113E12000 + 0x30E000);
         let module = module_range.0;
+        // print_message(&format!("{:?}", module_range));
 
         let pointer_size = match format {
             BinaryFormat::PE => pe::MachineType::read(process, module)?.pointer_size()?,
@@ -90,13 +90,20 @@ impl Module {
             }
             #[cfg(feature = "alloc")]
             BinaryFormat::MachO => {
-                macho::symbols(process, module_range)?
-                    .find(|symbol| {
+                let mut symbols = macho::symbols(process, module_range)?;
+                // print_message("e");
+                let x = symbols.find(|symbol| {
                         symbol
                             .get_name::<26>(process)
-                            .is_ok_and(|name| name.matches("_mono_assembly_foreach"))
-                    })?
-                    .address
+                            .is_ok_and(|name| {
+                                // print_message(name.validate_utf8().unwrap());
+                                name.matches("_mono_assembly_foreach")
+                            })
+                    });
+                let y = x?
+                    .address;
+                // print_message("f");
+                y
             }
         };
 
@@ -145,6 +152,7 @@ impl Module {
     }
 
     fn assemblies<'a>(&'a self, process: &'a Process) -> impl FusedIterator<Item = Assembly> + 'a {
+        // print_message(&format!("{}", self.assemblies));
         let mut assembly = process
             .read_pointer(self.assemblies, self.pointer_size)
             .ok()
@@ -176,13 +184,15 @@ impl Module {
     /// [`get_default_image`](Self::get_default_image) function is a shorthand
     /// for this function that accesses the `Assembly-CSharp` [image](Image).
     pub fn get_image(&self, process: &Process, assembly_name: &str) -> Option<Image> {
-        self.assemblies(process)
+        let x = self.assemblies(process)
             .find(|assembly| {
                 assembly
                     .get_name::<CSTR>(process, self)
                     .is_ok_and(|name| name.matches(assembly_name))
             })
-            .and_then(|assembly| assembly.get_image(process, self))
+            .and_then(|assembly| assembly.get_image(process, self));
+
+        x
     }
 
     /// Looks for the `Assembly-CSharp` binary [image](Image) inside the target
@@ -272,6 +282,7 @@ impl Assembly {
     }
 
     fn get_image(&self, process: &Process, module: &Module) -> Option<Image> {
+        // print_message(&format!("{}", self.assembly));
         process
             .read_pointer(
                 self.assembly + module.offsets.monoassembly_image,
@@ -279,7 +290,9 @@ impl Assembly {
             )
             .ok()
             .filter(|val| !val.is_null())
-            .map(|image| Image { image })
+            .map(|image| {
+                // print_message(&format!("{image}"));
+                Image { image } })
     }
 }
 
@@ -297,6 +310,7 @@ impl Image {
         process: &'a Process,
         module: &'a Module,
     ) -> impl FusedIterator<Item = Class> + 'a {
+        // print_message(&format!("{}", self.image));
         let class_cache_size = process
             .read::<i32>(
                 self.image
@@ -347,9 +361,14 @@ impl Image {
     /// Tries to find the specified [.NET class](struct@Class) in the image.
     pub fn get_class(&self, process: &Process, module: &Module, class_name: &str) -> Option<Class> {
         self.classes(process, module).find(|class| {
-            class
-                .get_name::<CSTR>(process, module)
-                .is_ok_and(|name| name.matches(class_name))
+            // print_message(&format!("{:?}", class));
+            let name = class
+                .get_name::<CSTR>(process, module);
+            if let Ok(name) = name {
+                // print_message(&format!("  {:?}", name.clone().validate_utf8()));
+            }
+
+            name.is_ok_and(|name| name.matches(class_name))
         })
     }
 
@@ -367,9 +386,9 @@ impl Image {
 }
 
 /// A .NET class that is part of an [`Image`](Image).
-#[derive(Copy, Clone)]
+#[derive(Debug, Copy, Clone)]
 pub struct Class {
-    class: Address,
+    pub class: Address,
 }
 
 impl Class {
@@ -424,6 +443,7 @@ impl Class {
                     .read::<u32>(this_class?.class + module.offsets.monoclassdef_field_count)
                     .ok()
                     .filter(|val| !val.eq(&0));
+                // print_message(&format!("field count: {field_count:?}"));
 
                 let fields = field_count.and_then(|_| {
                     process
@@ -435,6 +455,7 @@ impl Class {
                         )
                         .ok()
                 });
+                // print_message(&format!("fields: {fields:?}"));
 
                 this_class = this_class?.get_parent(process, module);
 
@@ -463,9 +484,13 @@ impl Class {
     ) -> Option<u32> {
         self.fields(process, module)
             .find(|field| {
-                field
-                    .get_name::<CSTR>(process, module)
-                    .is_ok_and(|name| name.matches(field_name))
+                let name = field
+                    .get_name::<CSTR>(process, module);
+                // if let Ok(name) = name {
+                    // print_message(&format!("field name: {:?} against {field_name}", name.validate_utf8()));
+                // }
+
+                name.is_ok_and(|name| name.matches(field_name))
             })
             .and_then(|field| field.get_offset(process, module))
     }
@@ -479,9 +504,11 @@ impl Class {
         field_name: &str,
     ) -> Address {
         let static_table = self.wait_get_static_table(process, module).await;
+        // print_message(&format!("table: {}", static_table));
         let field_offset = self
             .wait_get_field_offset(process, module, field_name)
             .await;
+        // print_message(&format!("offset: {}", field_offset));
         let singleton_location = static_table + field_offset;
 
         retry(|| {
@@ -507,6 +534,7 @@ impl Class {
                 module.pointer_size,
             )
             .ok()?;
+        // print_message(&format!("{}", runtime_info));
 
         let mut vtables = process
             .read_pointer(
@@ -514,6 +542,7 @@ impl Class {
                 module.pointer_size,
             )
             .ok()?;
+        // print_message(&format!("{}", vtables));
 
         // Mono V1 behaves differently when it comes to recover the static table
         match module.version {
@@ -599,6 +628,7 @@ impl Field {
         process: &Process,
         module: &Module,
     ) -> Result<ArrayCString<N>, Error> {
+        // print_message(&format!("field name: {} {}", self.field, module.offsets.monoclassfield_name));
         process
             .read_pointer(
                 self.field + module.offsets.monoclassfield_name,
@@ -1002,11 +1032,11 @@ impl Offsets {
                     monointernalhashtable_size: 0x18,
                     monoclassdef_next_class_cache: 0xF8,
                     monoclassdef_klass: 0x0,
-                    monoclass_name: 0x40,
+                    monoclass_name: 0x48,
                     monoclass_name_space: 0x48,
-                    monoclass_fields: 0xA0,
-                    monoclassdef_field_count: 0x8C,
-                    monoclass_runtime_info: 0xF0,
+                    monoclass_fields: 0xA8,
+                    monoclassdef_field_count: 0x94,
+                    monoclass_runtime_info: 0xF8,
                     monoclass_vtable_size: 0x18, // MonoVtable.data
                     monoclass_parent: 0x28,
                     monoclassfield_name: 0x8,

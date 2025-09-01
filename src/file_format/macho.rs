@@ -5,10 +5,10 @@ use core::iter::FusedIterator;
 
 #[cfg(feature = "alloc")]
 use alloc::collections::BTreeMap;
-
+use alloc::format;
 #[cfg(feature = "alloc")]
 use crate::{string::ArrayCString, Error};
-use crate::{Address, PointerSize, Process};
+use crate::{ print_message, Address, PointerSize, Process};
 
 // Magic mach-o header constants from:
 // https://opensource.apple.com/source/xnu/xnu-4570.71.2/EXTERNAL_HEADERS/mach-o/loader.h.auto.html
@@ -118,6 +118,9 @@ pub fn symbols(
     range: (Address, u64),
 ) -> Option<impl FusedIterator<Item = Symbol> + '_> {
     let page = scan_macho_page(process, range)?;
+    let page = Address::from(0x113e2b000_u64);
+    print_message(&format!("0x{} - 0x{}", range.0, range.0 + range.1));
+    print_message(&format!("0x{}", page));
     let offsets = MachOFormatOffsets::new();
     let number_of_commands: u32 = process.read(page + offsets.number_of_commands).ok()?;
 
@@ -128,14 +131,24 @@ pub fn symbols(
 
     let mut next: u32 = offsets.load_commands;
     for _i in 0..number_of_commands {
+        print_message(&format!("addr {}", page + next));
         let cmdtype: u32 = process.read(page + next).ok()?;
+        print_message(&format!("cmdtype {}", cmdtype));
+
         if cmdtype == LC_SYMTAB {
             symtab_fileoff = process.read(page + next + offsets.symtab_offset).ok()?;
+            // print_message(&format!("symtab_fileoff {}", symtab_fileoff));
             number_of_symbols = process.read(page + next + offsets.number_of_symbols).ok()?;
+            // print_message(&format!("number_of_symbols {}", number_of_symbols));
             strtab_fileoff = process.read(page + next + offsets.strtab_offset).ok()?;
+            // print_message(&format!("strtab_fileoff {}", strtab_fileoff));
         } else if cmdtype == LC_SEGMENT_64 {
+            let name = process.read::<ArrayCString<26>>(page + next + 0x8).ok()?;
+            // print_message(&format!("name {}", name.validate_utf8().unwrap()));
             let vmaddr: u64 = process.read(page + next + offsets.segcmd64_vmaddr).ok()?;
+            // print_message(&format!("vmaddr {}", vmaddr));
             let fileoff: u64 = process.read(page + next + offsets.segcmd64_fileoff).ok()?;
+            // print_message(&format!("fileoff {}", fileoff));
             map_fileoff_to_vmaddr.insert(fileoff, vmaddr);
         }
         let command_size: u32 = process.read(page + next + offsets.command_size).ok()?;
@@ -146,17 +159,26 @@ pub fn symbols(
         return None;
     }
 
+    print_message(&format!("map_fileoff_to_vmaddr {:?}",map_fileoff_to_vmaddr));
     let symtab_vmaddr = fileoff_to_vmaddr(&map_fileoff_to_vmaddr, symtab_fileoff as u64);
+    // print_message(&format!("symtab_vmaddr {:X} {:X}", symtab_vmaddr, symtab_fileoff));
+
     let strtab_vmaddr = fileoff_to_vmaddr(&map_fileoff_to_vmaddr, strtab_fileoff as u64);
+    // print_message(&format!("strtab_vmaddr {:X} {:X}", strtab_vmaddr, strtab_fileoff));
 
     Some(
         (0..number_of_symbols)
             .filter_map(move |j| {
                 let nlist_item = page + symtab_vmaddr + (j * offsets.size_of_nlist_item);
+                // print_message(&format!("nlist {}", nlist_item));
                 let symname_offset: u32 = process.read(nlist_item).ok()?;
+                // print_message(&format!("symname_offset {}", symname_offset));
                 let string_address = page + strtab_vmaddr + symname_offset;
+                // print_message(&format!("string_address {}", string_address));
                 let symbol_fileoff = process.read(nlist_item + offsets.nlist_value).ok()?;
+                // print_message(&format!("fileoff {}", symbol_fileoff));
                 let symbol_vmaddr = fileoff_to_vmaddr(&map_fileoff_to_vmaddr, symbol_fileoff);
+                // print_message(&format!("vmaddr {}", symbol_vmaddr));
                 let symbol_address = page + symbol_vmaddr;
                 Some(Symbol {
                     address: symbol_address,
