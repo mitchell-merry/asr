@@ -83,6 +83,9 @@
 // https://github.com/Unity-Technologies/mono
 // https://github.com/CryZe/lunistice-auto-splitter/blob/b8c01031991783f7b41044099ee69edd54514dba/asr-dotnet/src/lib.rs
 
+use crate::file_format::{elf, macho, pe};
+use crate::{Error, PointerSize, Process};
+
 pub mod il2cpp;
 pub mod mono;
 pub mod scene_manager;
@@ -95,6 +98,26 @@ enum BinaryFormat {
     PE,
     ELF,
     MachO,
+}
+
+impl Process {
+    pub fn get_format_and_pointer_size(&self) -> Result<(BinaryFormat, PointerSize), Error> {
+        let main_module = self.get_main_module_range()?;
+
+        if let Some(x) = pe::MachineType::read(self, main_module.0) {
+            Ok((BinaryFormat::PE, x.pointer_size().ok_or(Error {})?))
+        } else if let Some(pointer_size) = elf::pointer_size(self, main_module.0) {
+            Ok((BinaryFormat::ELF, pointer_size))
+        } else if let Some(pointer_size) = macho::pointer_size(self, main_module) {
+            Ok((BinaryFormat::MachO, pointer_size))
+        } else {
+            Err(Error {})
+        }
+    }
+
+    pub fn get_pointer_size(&self) -> Result<PointerSize, Error> {
+        Ok(self.get_format_and_pointer_size()?.1)
+    }
 }
 
 /// If the field name is an auto-property, extract the backing field name.
