@@ -235,6 +235,25 @@ impl Process {
         Ok((self.get_module_address(name)?, self.get_module_size(name)?))
     }
 
+    /// Get the name of the process
+    #[cfg(feature = "alloc")]
+    #[inline]
+    pub fn get_name(&self) -> Result<alloc::string::String, Error> {
+        let path = self.get_path()?;
+        match path.split("/").last() {
+            Some(name) => Ok(name.into()),
+            None => Err(Error {}),
+        }
+    }
+
+    /// Get the address and size of the main module in the process
+    #[cfg(feature = "alloc")]
+    #[inline]
+    pub fn get_main_module_range(&self) -> Result<(Address, u64), Error> {
+        let main_module_name = self.get_name()?;
+        self.get_module_range(&main_module_name)
+    }
+
     /// Iterates over all committed (not reserved, not free) memory ranges of the process.
     #[inline]
     pub fn memory_ranges(&self) -> impl DoubleEndedIterator<Item = MemoryRange<'_>> {
