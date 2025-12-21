@@ -40,6 +40,25 @@ pub struct SceneManager {
     offsets: &'static Offsets,
 }
 
+fn try_attach_unity_player(process: &Process) -> Option<((Address, u64), BinaryFormat)> {
+    [
+        ("UnityPlayer.dll", BinaryFormat::PE),
+        ("UnityPlayer.so", BinaryFormat::ELF),
+        ("UnityPlayer.dylib", BinaryFormat::MachO),
+    ]
+    .into_iter()
+    .find_map(|(name, format)| match format {
+        BinaryFormat::PE => {
+            let address = process.get_module_address(name).ok()?;
+            Some((
+                (address, pe::read_size_of_image(process, address)? as u64),
+                format,
+            ))
+        }
+        _ => Some((process.get_module_range(name).ok()?, format)),
+    })
+}
+
 impl SceneManager {
     /// Attaches to the scene manager in the given process.
     pub fn attach(process: &Process) -> Option<Self> {
@@ -53,63 +72,78 @@ impl SceneManager {
         const SIG_32_2: Signature<6> = Signature::new("53 8D 41 ?? 33 DB");
         const SIG_32_3: Signature<14> = Signature::new("55 8B EC 83 EC 18 A1 ?? ?? ?? ?? 33 C9 53");
 
-        let (unity_player, format) = [
-            ("UnityPlayer.dll", BinaryFormat::PE),
-            ("UnityPlayer.so", BinaryFormat::ELF),
-            ("UnityPlayer.dylib", BinaryFormat::MachO),
-        ]
-        .into_iter()
-        .find_map(|(name, format)| match format {
-            BinaryFormat::PE => {
-                let address = process.get_module_address(name).ok()?;
-                Some((
-                    (address, pe::read_size_of_image(process, address)? as u64),
-                    format,
-                ))
-            }
-            _ => Some((process.get_module_range(name).ok()?, format)),
-        })?;
-
-        let pointer_size = match format {
-            BinaryFormat::PE => pe::MachineType::read(process, unity_player.0)?.pointer_size()?,
-            BinaryFormat::ELF => elf::pointer_size(process, unity_player.0)?,
-            BinaryFormat::MachO => macho::pointer_size(process, unity_player)?,
-        };
-
         let is_il2cpp = process.get_module_address("GameAssembly.dll").is_ok();
 
-        // There are multiple signatures that can be used, depending on the version of Unity
-        // used in the target game.
-        let base_address: Address = match (pointer_size, format) {
-            (PointerSize::Bit64, BinaryFormat::PE) => {
-                let addr = SIG_64_BIT_PE.scan_process_range(process, unity_player)? + 7;
-                addr + 0x4 + process.read::<i32>(addr).ok()?
-            }
-            (PointerSize::Bit64, BinaryFormat::ELF) => {
-                let addr = SIG_64_BIT_ELF.scan_process_range(process, unity_player)? + 7;
-                addr + 0x4 + process.read::<i32>(addr).ok()?
-            }
-            (PointerSize::Bit64, BinaryFormat::MachO) => {
-                let addr = SIG_64_BIT_MACHO.scan_process_range(process, unity_player)? + 7;
-                addr + 0x4 + process.read::<i32>(addr).ok()?
-            }
-            (PointerSize::Bit32, BinaryFormat::PE) => {
-                if let Some(addr) = SIG_32_1.scan_process_range(process, unity_player) {
-                    process.read::<Address32>(addr + 5).ok()?.into()
-                } else if let Some(addr) = SIG_32_2.scan_process_range(process, unity_player) {
-                    process.read::<Address32>(addr.add_signed(-4)).ok()?.into()
-                } else if let Some(addr) = SIG_32_3.scan_process_range(process, unity_player) {
-                    process.read::<Address32>(addr + 7).ok()?.into()
-                } else {
+        let (pointer_size, base_address, offsets) = if let Some((unity_player, format)) =
+            try_attach_unity_player(process)
+        {
+            let pointer_size = match format {
+                BinaryFormat::PE => {
+                    pe::MachineType::read(process, unity_player.0)?.pointer_size()?
+                }
+                BinaryFormat::ELF => elf::pointer_size(process, unity_player.0)?,
+                BinaryFormat::MachO => macho::pointer_size(process, unity_player)?,
+            };
+
+            // There are multiple signatures that can be used, depending on the version of Unity
+            // used in the target game.
+            let base_address: Address = match (pointer_size, format) {
+                (PointerSize::Bit64, BinaryFormat::PE) => {
+                    let addr = SIG_64_BIT_PE.scan_process_range(process, unity_player)? + 7;
+                    addr + 0x4 + process.read::<i32>(addr).ok()?
+                }
+                (PointerSize::Bit64, BinaryFormat::ELF) => {
+                    let addr = SIG_64_BIT_ELF.scan_process_range(process, unity_player)? + 7;
+                    addr + 0x4 + process.read::<i32>(addr).ok()?
+                }
+                (PointerSize::Bit64, BinaryFormat::MachO) => {
+                    let addr = SIG_64_BIT_MACHO.scan_process_range(process, unity_player)? + 7;
+                    addr + 0x4 + process.read::<i32>(addr).ok()?
+                }
+                (PointerSize::Bit32, BinaryFormat::PE) => {
+                    if let Some(addr) = SIG_32_1.scan_process_range(process, unity_player) {
+                        process.read::<Address32>(addr + 5).ok()?.into()
+                    } else if let Some(addr) = SIG_32_2.scan_process_range(process, unity_player) {
+                        process.read::<Address32>(addr.add_signed(-4)).ok()?.into()
+                    } else if let Some(addr) = SIG_32_3.scan_process_range(process, unity_player) {
+                        process.read::<Address32>(addr + 7).ok()?.into()
+                    } else {
+                        return None;
+                    }
+                }
+                _ => {
                     return None;
                 }
-            }
-            _ => {
-                return None;
-            }
-        };
+            };
 
-        let offsets = Offsets::new(pointer_size)?;
+            let offsets = Offsets::new(pointer_size, true)?;
+
+            (pointer_size, base_address, offsets)
+        } else {
+            // older versions of unity have the scene manager in the main module still
+            let main_module_range = process.get_main_module_range().ok()?;
+            let (format, pointer_size) = process.get_format_and_pointer_size().ok()?;
+
+            let base_address = main_module_range.0
+                + match (pointer_size, format) {
+                    (PointerSize::Bit32, BinaryFormat::PE) => {
+                        // GetActiveScene internally calls GetSceneManager, we this sig is for GetActiveScene
+                        const SIG: Signature<17> =
+                            Signature::new("55 8B EC E8 ?? ?? ?? ?? 8B C8 E8 ?? ?? ?? ?? 85 C0");
+
+                        let addr = SIG.scan_process_range(process, main_module_range)? + 0x4;
+                        let another = addr + process.read::<i32>(addr).ok()? + 0x4;
+
+                        // mov [address]
+                        process.read::<u32>(another + 0x1).ok()?
+                    }
+                    _ => return None,
+                };
+
+            let offsets = Offsets::new(pointer_size, false)?;
+
+            (pointer_size, base_address, offsets)
+        };
 
         // Dereferencing one level because this pointer never changes as long as the game is open.
         // It might not seem a lot, but it helps make things a bit faster when querying for scene stuff.

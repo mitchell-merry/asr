@@ -15,9 +15,12 @@ pub(super) struct Offsets {
 }
 
 impl Offsets {
-    pub(super) const fn new(pointer_size: PointerSize) -> Option<&'static Self> {
-        match pointer_size {
-            PointerSize::Bit64 => Some(&Self {
+    pub(super) const fn new(
+        pointer_size: PointerSize,
+        in_unity_player: bool,
+    ) -> Option<&'static Self> {
+        match (pointer_size, in_unity_player) {
+            (PointerSize::Bit64, true) => Some(&Self {
                 scene_count: 0x18,
                 active_scene: 0x48,
                 dont_destroy_on_load_scene: 0x70,
@@ -30,9 +33,23 @@ impl Offsets {
                 klass_name: 0x48,
                 children_pointer: 0x70,
             }),
-            PointerSize::Bit32 => Some(&Self {
+            (PointerSize::Bit32, true) => Some(&Self {
                 scene_count: 0x10,
                 active_scene: 0x28,
+                dont_destroy_on_load_scene: 0x40,
+                asset_path: 0xC,
+                build_index: 0x70,
+                root_storage_container: 0x88,
+                game_object: 0x1C,
+                game_object_name: 0x3C,
+                klass: 0x18,
+                klass_name: 0x2C,
+                children_pointer: 0x50,
+            }),
+            (PointerSize::Bit32, false) => Some(&Self {
+                active_scene: 0x24,
+
+                scene_count: 0x10,
                 dont_destroy_on_load_scene: 0x40,
                 asset_path: 0xC,
                 build_index: 0x70,
