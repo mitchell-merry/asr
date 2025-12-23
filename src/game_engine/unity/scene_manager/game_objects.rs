@@ -28,26 +28,27 @@ impl SceneManager {
         let mut current_list = list_first;
 
         iter::from_fn(move || {
-            let [first, _, third]: [Address; 3] = match self.pointer_size {
+            // TODO check if this is correct on other games
+            let [_prev, next, current]: [Address; 3] = match self.pointer_size {
                 PointerSize::Bit64 => process
                     .read::<[Address64; 3]>(current_list?)
                     .ok()
-                    .filter(|[first, _, third]| !first.is_null() && !third.is_null())?
+                    .filter(|[_prev, next, current]| !first.is_null() && !third.is_null())?
                     .map(|a| a.into()),
                 _ => process
                     .read::<[Address32; 3]>(current_list?)
                     .ok()
-                    .filter(|[first, _, third]| !first.is_null() && !third.is_null())?
+                    .filter(|[_prev, next, current]| !first.is_null() && !third.is_null())?
                     .map(|a| a.into()),
             };
 
-            if first == list_first? {
+            if next == list_first? {
                 current_list = None;
             } else {
-                current_list = Some(first);
+                current_list = Some(next);
             }
 
-            Some(Transform { address: third })
+            Some(Transform { address: current })
         })
         .fuse()
     }
