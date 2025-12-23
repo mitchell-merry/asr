@@ -9,6 +9,7 @@
 use crate::{
     file_format::{elf, macho, pe},
     future::retry,
+    print_message,
     signature::Signature,
     string::ArrayCString,
     Address, Address32, Error, PointerSize, Process,
@@ -124,23 +125,44 @@ impl SceneManager {
             let main_module_range = process.get_main_module_range().ok()?;
             let (format, pointer_size) = process.get_format_and_pointer_size().ok()?;
 
-            let base_address = main_module_range.0
-                + match (pointer_size, format) {
-                    (PointerSize::Bit32, BinaryFormat::PE) => {
-                        // GetActiveScene internally calls GetSceneManager, we this sig is for GetActiveScene
-                        const SIG: Signature<17> =
-                            Signature::new("55 8B EC E8 ?? ?? ?? ?? 8B C8 E8 ?? ?? ?? ?? 85 C0");
+            let base_address: Address = match (pointer_size, format) {
+                (PointerSize::Bit32, BinaryFormat::PE) => {
+                    // GetActiveScene internally calls GetSceneManager, we this sig is for GetActiveScene
+                    const SIG: Signature<17> =
+                        Signature::new("55 8B EC E8 ?? ?? ?? ?? 8B C8 E8 ?? ?? ?? ?? 85 C0");
 
-                        let addr = SIG.scan_process_range(process, main_module_range)? + 0x4;
-                        let another = addr + process.read::<i32>(addr).ok()? + 0x4;
+                    let addr = SIG.scan_process_range(process, main_module_range)? + 0x4;
+                    let another = addr + process.read::<i32>(addr).ok()? + 0x4;
 
-                        // mov [address]
-                        process.read::<u32>(another + 0x1).ok()?
-                    }
-                    _ => return None,
-                };
+                    // mov [address]
+                    main_module_range.0 + process.read::<u32>(another + 0x1).ok()?
+                }
+                (PointerSize::Bit64, BinaryFormat::MachO) => {
+                    // GetActiveScene internally calls GetSceneManager, we this sig is for GetActiveScene
+                    const SIG: Signature<18> =
+                        Signature::new("48 89 FB E8 ?? ?? ?? ?? 48 89 C7 E8 ?? ?? ?? ?? 31 C9");
+
+                    print_message("aga");
+                    let addr = SIG.scan_process_range(process, main_module_range)? + 0x4;
+                    // print_message(&format!("{}", addr));
+                    let another = addr + process.read::<i32>(addr).ok()? + 0x4;
+                    // print_message(&format!("anotva {}", another));
+
+                    // Cuphead.GetSceneManager()   - 55                    - push rbp
+                    // Cuphead.GetSceneManager()+1 - 48 89 E5              - mov rbp,rsp
+                    // Cuphead.GetSceneManager()+4 - 48 8B 05 4D821101     - mov rax,[Cuphead.g_RuntimeSceneManager]
+                    let aga: Address = another + 0x7;
+                    let x = process.read::<i32>(aga).ok()?;
+                    // print_message(&format!("x {:X?}", x));
+                    let true_x: Address = aga + x + 0x4;
+                    // print_message(&format!("true_x {:X?}", true_x));
+                    true_x
+                }
+                _ => return None,
+            };
 
             let offsets = Offsets::new(pointer_size, false)?;
+            // print_message(&format!("badress {}", base_address));
 
             (pointer_size, base_address, offsets)
         };
