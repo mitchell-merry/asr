@@ -33,12 +33,12 @@ impl SceneManager {
                 PointerSize::Bit64 => process
                     .read::<[Address64; 3]>(current_list?)
                     .ok()
-                    .filter(|[_prev, next, current]| !first.is_null() && !third.is_null())?
+                    .filter(|[_prev, next, current]| !next.is_null() && !current.is_null())?
                     .map(|a| a.into()),
                 _ => process
                     .read::<[Address32; 3]>(current_list?)
                     .ok()
-                    .filter(|[_prev, next, current]| !first.is_null() && !third.is_null())?
+                    .filter(|[_prev, next, current]| !next.is_null() && !current.is_null())?
                     .map(|a| a.into()),
             };
 
