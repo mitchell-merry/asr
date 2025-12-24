@@ -15,8 +15,6 @@ use crate::{
     Address, Address32, Error, PointerSize, Process,
 };
 
-mod game_objects;
-
 mod offsets;
 
 mod transform;
