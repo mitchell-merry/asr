@@ -9,6 +9,7 @@ use core::mem::MaybeUninit;
 ///
 /// If you have an instance of a C# game object (which you might get via following a path from a
 /// static field), the C++ game object is at + pointer_size * 2 (0x8 on 32 bit, 0x10 on 64 bit).
+#[derive(Clone, Debug)]
 pub struct CppGameObject {
     pub(super) address: Address,
 }
