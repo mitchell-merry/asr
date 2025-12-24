@@ -109,14 +109,7 @@ impl<const CAP: usize> UnityPointer<CAP> {
                 _ => {
                     let current_class = match i {
                         0 => starting_class,
-                        _ => process
-                            .read_pointer(current_object, module.pointer_size)
-                            .ok()
-                            .filter(|val| !val.is_null())
-                            .and_then(|addr| process.read_pointer(addr, module.pointer_size).ok())
-                            .filter(|val| !val.is_null())
-                            .map(|class| Class { class })
-                            .ok_or(Error {})?,
+                        _ => Class::from_object(process, module, current_object)?,
                     };
 
                     current_class
