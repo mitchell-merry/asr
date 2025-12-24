@@ -14,6 +14,7 @@ use crate::{
     string::ArrayCString,
     Address, Address32, Error, PointerSize, Process,
 };
+use alloc::format;
 
 mod offsets;
 
@@ -167,6 +168,8 @@ impl SceneManager {
 
             (pointer_size, base_address, offsets)
         };
+
+        print_message(&format!("{}", base_address));
 
         // Dereferencing one level because this pointer never changes as long as the game is open.
         // It might not seem a lot, but it helps make things a bit faster when querying for scene stuff.
