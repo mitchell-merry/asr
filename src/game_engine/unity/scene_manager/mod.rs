@@ -25,6 +25,7 @@ pub use transform::Transform;
 use offsets::Offsets;
 
 mod cpp_game_object;
+pub use cpp_game_object::CppGameObject;
 mod scene;
 
 pub use scene::Scene;

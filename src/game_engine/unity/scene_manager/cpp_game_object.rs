@@ -1,5 +1,5 @@
-use crate::string::ArrayCString;
-use crate::{Address, Address32, Address64, Error, PointerSize, Process};
+use super::{SceneManager, CSTR};
+use crate::{string::ArrayCString, Address, Address32, Address64, Error, PointerSize, Process};
 use core::array;
 use core::mem::MaybeUninit;
 
@@ -17,7 +17,7 @@ impl CppGameObject {
     pub fn classes<'a>(
         &'a self,
         process: &'a Process,
-        scene_manager: &'a crate::game_engine::unity::scene_manager::SceneManager,
+        scene_manager: &'a SceneManager,
     ) -> Result<impl Iterator<Item = Address> + 'a, Error> {
         let (number_of_components, main_object): (usize, Address) = match scene_manager.pointer_size
         {
@@ -86,22 +86,29 @@ impl CppGameObject {
     ) -> Result<Address, Error> {
         self.classes(process, scene_manager)?
             .find(|&addr| {
-                let val: Result<ArrayCString<crate::game_engine::unity::CSTR>, Error> =
-                    match scene_manager.is_il2cpp {
-                        true => process.read_pointer_path(
-                            addr,
-                            scene_manager.pointer_size,
-                            &[0x0, scene_manager.size_of_ptr().wrapping_mul(2), 0x0],
-                        ),
-                        false => process.read_pointer_path(
-                            addr,
-                            scene_manager.pointer_size,
-                            &[0x0, 0x0, scene_manager.offsets.klass_name as u64, 0x0],
-                        ),
-                    };
+                let val: Result<ArrayCString<CSTR>, Error> = match scene_manager.is_il2cpp {
+                    true => process.read_pointer_path(
+                        addr,
+                        scene_manager.pointer_size,
+                        &[0x0, scene_manager.size_of_ptr().wrapping_mul(2), 0x0],
+                    ),
+                    false => process.read_pointer_path(
+                        addr,
+                        scene_manager.pointer_size,
+                        &[0x0, 0x0, scene_manager.offsets.klass_name as u64, 0x0],
+                    ),
+                };
 
                 val.is_ok_and(|class_name| class_name.matches(name))
             })
             .ok_or(Error {})
+    }
+
+    pub fn is_active_in_hierarchy(
+        &self,
+        process: &Process,
+        scene_manager: &SceneManager,
+    ) -> Result<bool, Error> {
+        process.read::<bool>(self.address + scene_manager.offsets.game_object_activeinhierarchy)
     }
 }

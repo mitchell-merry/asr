@@ -1,4 +1,4 @@
-use super::SceneManager;
+use super::{SceneManager, CSTR};
 use crate::{string::ArrayCString, Address, Error, Process};
 
 /// A scene loaded in the attached game.
@@ -46,7 +46,7 @@ impl Scene {
         process: &Process,
         scene_manager: &SceneManager,
     ) -> Result<alloc::string::String, Error> {
-        let path = self.path::<256>(process, scene_manager)?;
+        let path = self.path::<CSTR>(process, scene_manager)?;
         let str = path.validate_utf8().map_err(|_| Error {})?;
 
         Ok(str.into())

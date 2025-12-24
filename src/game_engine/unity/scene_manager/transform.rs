@@ -46,27 +46,6 @@ impl Transform {
         })
     }
 
-    /// Iterates over the classes referred to in the current `Transform`.
-    pub fn classes<'a>(
-        &'a self,
-        process: &'a Process,
-        scene_manager: &'a SceneManager,
-    ) -> Result<impl Iterator<Item = Address> + 'a, Error> {
-        let game_object = self.get_game_object(process, scene_manager)?;
-        game_object.classes(process, scene_manager)
-    }
-
-    /// Tries to find the base address of a class in the current `GameObject`.
-    pub fn get_class(
-        &self,
-        process: &Process,
-        scene_manager: &SceneManager,
-        name: &str,
-    ) -> Result<Address, Error> {
-        let game_object = self.get_game_object(process, scene_manager)?;
-        game_object.get_class(process, scene_manager, name)
-    }
-
     /// Iterates over children `Transform`s referred by the current one
     pub fn children<'a>(
         &'a self,
