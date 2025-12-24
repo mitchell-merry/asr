@@ -80,6 +80,7 @@ impl SceneManager {
         let (pointer_size, base_address, offsets) = if let Some((unity_player, format)) =
             try_attach_unity_player(process)
         {
+            print_message("aga 1");
             let pointer_size = match format {
                 BinaryFormat::PE => {
                     pe::MachineType::read(process, unity_player.0)?.pointer_size()?
@@ -87,12 +88,16 @@ impl SceneManager {
                 BinaryFormat::ELF => elf::pointer_size(process, unity_player.0)?,
                 BinaryFormat::MachO => macho::pointer_size(process, unity_player)?,
             };
+            print_message("aga 2");
 
             // There are multiple signatures that can be used, depending on the version of Unity
             // used in the target game.
             let base_address: Address = match (pointer_size, format) {
                 (PointerSize::Bit64, BinaryFormat::PE) => {
+                    print_message("aga 3");
+
                     let addr = SIG_64_BIT_PE.scan_process_range(process, unity_player)? + 7;
+                    print_message("aga 4");
                     addr + 0x4 + process.read::<i32>(addr).ok()?
                 }
                 (PointerSize::Bit64, BinaryFormat::ELF) => {
@@ -104,6 +109,7 @@ impl SceneManager {
                     addr + 0x4 + process.read::<i32>(addr).ok()?
                 }
                 (PointerSize::Bit32, BinaryFormat::PE) => {
+                    print_message("aga 5");
                     if let Some(addr) = SIG_32_1.scan_process_range(process, unity_player) {
                         process.read::<Address32>(addr + 5).ok()?.into()
                     } else if let Some(addr) = SIG_32_2.scan_process_range(process, unity_player) {
@@ -111,6 +117,7 @@ impl SceneManager {
                     } else if let Some(addr) = SIG_32_3.scan_process_range(process, unity_player) {
                         process.read::<Address32>(addr + 7).ok()?.into()
                     } else {
+                        print_message("aga 6");
                         return None;
                     }
                 }
@@ -120,6 +127,7 @@ impl SceneManager {
             };
 
             let offsets = Offsets::new(pointer_size, true)?;
+            print_message("aga 7");
 
             (pointer_size, base_address, offsets)
         } else {
@@ -164,7 +172,7 @@ impl SceneManager {
             };
 
             let offsets = Offsets::new(pointer_size, false)?;
-            // print_message(&format!("badress {}", base_address));
+            print_message(&format!("badress {}", base_address));
 
             (pointer_size, base_address, offsets)
         };
