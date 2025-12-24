@@ -13,11 +13,7 @@ pub struct Class {
 }
 
 impl Class {
-    pub(super) fn from_object(
-        process: &Process,
-        module: &Module,
-        object: Address,
-    ) -> Result<Self, Error> {
+    pub fn from_object(process: &Process, module: &Module, object: Address) -> Result<Self, Error> {
         process
             .read_pointer(object, module.pointer_size)
             .ok()
