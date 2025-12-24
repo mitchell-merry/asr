@@ -24,7 +24,9 @@ pub use transform::Transform;
 
 use offsets::Offsets;
 
+mod cpp_game_object;
 mod scene;
+
 pub use scene::Scene;
 
 use super::{BinaryFormat, CSTR};
