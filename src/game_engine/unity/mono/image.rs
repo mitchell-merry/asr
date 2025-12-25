@@ -1,10 +1,9 @@
-use alloc::format;
 use core::iter::{self, FusedIterator};
 
 use super::CSTR;
 use super::{Class, Module};
 use crate::future::retry;
-use crate::{print_message, Address, Process};
+use crate::{Address, Process};
 
 /// An image is a .NET DLL that is loaded by the game. The `Assembly-CSharp`
 /// image is the main game assembly, and contains all the game logic.
@@ -66,13 +65,10 @@ impl Image {
 
     /// Tries to find the specified [.NET class](struct@Class) in the image.
     pub fn get_class(&self, process: &Process, module: &Module, class_name: &str) -> Option<Class> {
-        print_message("obo");
         let name_space_index = class_name.rfind('.');
 
         self.classes(process, module).find(|class| {
-            print_message("class");
             class.get_name::<CSTR>(process, module).is_ok_and(|name| {
-                print_message(&format!("name"));
                 if let Some(name_space_index) = name_space_index {
                     let class_name_space = &class_name[..name_space_index];
                     let class_name = &class_name[name_space_index + 1..];
