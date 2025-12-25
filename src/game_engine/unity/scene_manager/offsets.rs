@@ -30,7 +30,7 @@ impl Offsets {
                 build_index: 0x98,
                 root_storage_container: 0xB0,
                 game_object: 0x30,
-                game_object_name: 0x60,
+                game_object_name: 0x68,
                 game_object_activeself: 0x5E,
                 game_object_activeinhierarchy: 0x5F,
                 klass: 0x28,
