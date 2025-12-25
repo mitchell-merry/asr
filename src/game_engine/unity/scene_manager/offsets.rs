@@ -71,7 +71,7 @@ impl Offsets {
                 scene_count: 0x10,
                 active_scene: 0x24,
                 dont_destroy_on_load_scene: 0x40,
-                asset_path: 0xC,
+                asset_path: 0x10,
                 build_index: 0x70,
                 root_storage_container: 0x90,
                 game_object: 0x1C,
