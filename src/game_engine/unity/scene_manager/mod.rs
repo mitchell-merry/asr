@@ -151,10 +151,10 @@ impl SceneManager {
                     // mov [address]
                     let final_addr = another + 0x1;
                     print_message(&format!("final_addr {}", final_addr));
-                    let x = process.read::<i32>(final_addr).ok()?;
-                    print_message(&format!("x {}", x));
+                    let x = process.read::<u32>(final_addr).ok()?;
+                    print_message(&format!("x {:?}", x));
 
-                    final_addr + x
+                    x.into()
                 }
                 (PointerSize::Bit64, BinaryFormat::MachO) => {
                     // GetActiveScene internally calls GetSceneManager, we this sig is for GetActiveScene
