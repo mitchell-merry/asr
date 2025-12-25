@@ -142,11 +142,16 @@ impl SceneManager {
                     const SIG: Signature<17> =
                         Signature::new("55 8B EC E8 ?? ?? ?? ?? 8B C8 E8 ?? ?? ?? ?? 85 C0");
 
+                    print_message("aga222");
                     let addr = SIG.scan_process_range(process, main_module_range)? + 0x4;
+                    print_message(&format!("{}", addr));
                     let another = addr + process.read::<i32>(addr).ok()? + 0x4;
+                    print_message(&format!("anotva {}", another));
 
                     // mov [address]
-                    main_module_range.0 + process.read::<u32>(another + 0x1).ok()?
+                    let x = process.read::<u32>(another + 0x1).ok()?;
+
+                    main_module_range.0 + x
                 }
                 (PointerSize::Bit64, BinaryFormat::MachO) => {
                     // GetActiveScene internally calls GetSceneManager, we this sig is for GetActiveScene
