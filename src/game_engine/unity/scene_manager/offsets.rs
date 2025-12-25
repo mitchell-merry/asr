@@ -79,7 +79,7 @@ impl Offsets {
                 game_object_activeself: 0x32,
                 game_object_activeinhierarchy: 0x33,
                 klass: 0x18,
-                klass_name: 0x2C,
+                klass_name: 0x30,
                 children_pointer: 0x50,
             }),
             _ => None,
