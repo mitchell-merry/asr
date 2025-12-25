@@ -1,5 +1,5 @@
 use super::{Class, Image, Module};
-use crate::{Address, Error, Process};
+use crate::{print_message, Address, Error, Process};
 use bytemuck::CheckedBitPattern;
 use core::{array, cell::RefCell};
 
@@ -136,12 +136,14 @@ impl<const CAP: usize> UnityPointer<CAP> {
         image: &Image,
     ) -> Result<Address, Error> {
         self.find_offsets(process, module, image)?;
+        print_message("found");
         let inner = self.inner.borrow();
         let mut address = inner.base_address;
         let (&last, path) = inner.offsets[..inner.depth].split_last().ok_or(Error {})?;
         for &offset in path {
             address = process.read_pointer(address + offset, module.pointer_size)?;
         }
+        print_message("wha");
         Ok(address + last)
     }
 
