@@ -49,12 +49,14 @@ impl<const CAP: usize> UnityPointer<CAP> {
 
     /// Tries to resolve the pointer path for the `Mono` class specified
     fn find_offsets(&self, process: &Process, module: &Module, image: &Image) -> Result<(), Error> {
+        print_message("finding...");
         let mut inner = self.inner.borrow_mut();
 
         // If the pointer path has already been found, there's no need to continue
         if inner.resolved_offsets == inner.depth {
             return Ok(());
         }
+        print_message("V");
 
         // Logic: the starting class can be recovered with the get_class() function,
         // and parent class can be recovered if needed. However, this is a VERY
@@ -68,6 +70,7 @@ impl<const CAP: usize> UnityPointer<CAP> {
                 let mut class = image
                     .get_class(process, module, inner.starting_class_name)
                     .ok_or(Error {})?;
+                print_message("X");
 
                 for _ in 0..inner.nr_of_parents {
                     class = class.get_parent(process, module).ok_or(Error {})?;
@@ -92,6 +95,7 @@ impl<const CAP: usize> UnityPointer<CAP> {
         let mut current_object = {
             let mut addr = inner.base_address;
             for &i in &inner.offsets[..inner.resolved_offsets] {
+                print_message("b");
                 addr = process.read_pointer(addr + i, module.pointer_size)?;
             }
             addr
@@ -99,6 +103,7 @@ impl<const CAP: usize> UnityPointer<CAP> {
 
         // We keep track of the already resolved offsets in order to skip resolving them again
         for i in inner.resolved_offsets..inner.depth {
+            print_message("z");
             let offset_from_string = match inner.fields[i].strip_prefix("0x") {
                 Some(rem) => u32::from_str_radix(rem, 16).ok(),
                 _ => inner.fields[i].parse().ok(),
