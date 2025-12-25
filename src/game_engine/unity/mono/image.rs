@@ -1,4 +1,3 @@
-use alloc::format;
 use core::iter::{self, FusedIterator};
 
 use super::CSTR;
@@ -58,8 +57,8 @@ impl Image {
                     .ok()
                     .filter(|val| !val.is_null());
 
-                print_message(&format!("ok, a class: {class}"));
-                panic!("aga");
+                // print_message(&format!("ok, a class: {class}"));
+                // panic!("aga");
                 Some(Class { class })
             })
             .fuse()
@@ -72,6 +71,9 @@ impl Image {
 
         self.classes(process, module).find(|class| {
             class.get_name::<CSTR>(process, module).is_ok_and(|name| {
+                let n = name.validate_utf8().unwrap();
+                print_message(n);
+
                 if let Some(name_space_index) = name_space_index {
                     let class_name_space = &class_name[..name_space_index];
                     let class_name = &class_name[name_space_index + 1..];
