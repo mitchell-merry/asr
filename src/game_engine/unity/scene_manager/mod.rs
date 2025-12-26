@@ -14,6 +14,9 @@ use crate::{
     Address, Address32, Error, PointerSize, Process,
 };
 
+mod cpp_game_object;
+pub use cpp_game_object::CppGameObject;
+
 mod game_objects;
 
 mod offsets;
