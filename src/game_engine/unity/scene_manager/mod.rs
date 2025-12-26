@@ -17,8 +17,6 @@ use crate::{
 mod cpp_game_object;
 pub use cpp_game_object::CppGameObject;
 
-mod game_objects;
-
 mod offsets;
 
 mod transform;
