@@ -128,4 +128,23 @@ impl Scene {
             })
             .ok_or(Error {})
     }
+
+    /// Find a [transform](Transform) in this scene by navigating the game object tree.
+    pub fn find_transform(
+        &self,
+        process: &Process,
+        scene_manager: &SceneManager,
+        root_object_name: &str,
+        child_transform_path: &[&str],
+    ) -> Result<Transform, Error> {
+        let mut current_transform =
+            self.get_root_game_object(process, scene_manager, root_object_name)?;
+
+        for transform_name in child_transform_path {
+            current_transform =
+                current_transform.get_child(process, scene_manager, transform_name)?;
+        }
+
+        Ok(current_transform)
+    }
 }
