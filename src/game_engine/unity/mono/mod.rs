@@ -29,6 +29,7 @@ use offsets::MonoOffsets;
 use super::{BinaryFormat, CSTR};
 
 /// Represents access to a Unity game that is using the standard Mono backend.
+#[derive(Clone)]
 pub struct Module {
     assemblies: Address,
     version: Version,
