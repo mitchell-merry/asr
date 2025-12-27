@@ -64,6 +64,7 @@ fn try_attach_unity_player(process: &Process) -> Option<((Address, u64), BinaryF
 impl SceneManager {
     /// Attaches to the scene manager in the given process.
     pub fn attach(process: &Process) -> Option<Self> {
+        return None;
         const SIG_64_BIT_PE: Signature<13> =
             Signature::new("48 83 EC 20 4C 8B ?5 ?? ?? ?? ?? 33 F6");
         const SIG_64_BIT_ELF: Signature<13> =
