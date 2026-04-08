@@ -1,5 +1,7 @@
 use super::{SceneManager, Transform, CSTR};
-use crate::{string::ArrayCString, Address, Address32, Address64, Error, PointerSize, Process};
+use crate::{
+    string::ArrayCString, Address, Address32, Address64, Error, PointerSize, Process,
+};
 use core::iter;
 use core::iter::FusedIterator;
 
@@ -86,6 +88,12 @@ impl Scene {
             )
             .ok()
             .filter(|val| !val.is_null());
+        // print_message(&format!("list_first {:?}", list_first));
+        // print_message(&format!("scene address {:?}", self.address));
+        // print_message(&format!(
+        //     "root_storage_container {:?}",
+        //     scene_manager.offsets.root_storage_container
+        // ));
 
         let mut current_list = list_first;
 
@@ -110,14 +118,12 @@ impl Scene {
                 current_list = Some(next);
             }
 
-            Some(
-                crate::game_engine::unity::scene_manager::transform::Transform { address: current },
-            )
+            Some(Transform { address: current })
         })
         .fuse()
     }
 
-    /// Tries to find the specified root [`crate::game_engine::unity::scene_manager::transform::Transform`] from the currently
+    /// Tries to find the specified root [`Transform`] from the currently
     /// active Unity scene.
     pub fn get_root_game_object(
         &self,
