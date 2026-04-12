@@ -88,7 +88,7 @@ impl<const CAP: usize> UnityPointer<CAP> {
                 .get_static_table(process, module)
                 .ok_or(Error {})?;
         };
-        print_message(&format!("static table {:?}", inner.base_address));
+        // print_message(&format!("static table {:?}", inner.base_address));
 
         // If we already resolved some offsets, we need to traverse them again starting from the base address
         // of the static table in order to recalculate the address of the farthest object we can reach.
@@ -111,26 +111,26 @@ impl<const CAP: usize> UnityPointer<CAP> {
             let current_offset = match offset_from_string {
                 Some(offset) => offset as _,
                 _ => {
-                    print_message("a");
+                    // print_message(&format!("a {} {current_object} i {i}", inner.fields[i]));
                     let current_class = match i {
                         0 => starting_class,
                         _ => Class::from_object(process, module, current_object)?,
                     };
-                    print_message("b");
+                    // print_message("b");
 
                     current_class
                         .get_field_offset(process, module, inner.fields[i])
                         .ok_or(Error {})?
                 }
             };
-            print_message("bC");
+            // print_message("bC");
 
             inner.offsets[i] = current_offset as _;
             inner.resolved_offsets += 1;
 
             current_object =
                 process.read_pointer(current_object + current_offset, module.pointer_size)?;
-            print_message("bD");
+            // print_message("bD");
         }
 
         Ok(())
@@ -150,6 +150,10 @@ impl<const CAP: usize> UnityPointer<CAP> {
         for &offset in path {
             address = process.read_pointer(address + offset, module.pointer_size)?;
         }
+        // print_message(&format!(
+        //     "deref'd {} to {address} + {last}",
+        //     self.inner.borrow().fields.join(", ")
+        // ));
         Ok(address + last)
     }
 

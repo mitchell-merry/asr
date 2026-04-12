@@ -147,10 +147,10 @@ impl Class {
         self.fields(process, module)
             .find(|field| {
                 field.get_name::<CSTR>(process, module).is_ok_and(|name| {
-                    print_message(&format!(
-                        "field {}",
-                        name.validate_utf8().unwrap_or_default()
-                    ));
+                    // print_message(&format!(
+                    //     "field {}",
+                    //     name.validate_utf8().unwrap_or_default()
+                    // ));
                     // If the name matches, return immediately
                     name.matches(field_name)
 
