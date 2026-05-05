@@ -133,6 +133,12 @@ impl Scene {
     ) -> Result<Transform, Error> {
         self.root_game_objects(process, scene_manager)
             .find(|obj| {
+                // let n = obj.get_name::<CSTR>(process, scene_manager);
+                // if let Ok(c) = n {
+                //     let fuckurust = c.clone();
+                //     print_message(&format!("{:?}", fuckurust.validate_utf8()));
+                // }
+
                 obj.get_name::<CSTR>(process, scene_manager)
                     .is_ok_and(|obj_name| obj_name.matches(name))
             })

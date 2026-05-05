@@ -28,7 +28,7 @@ impl Offsets {
                 dont_destroy_on_load_scene: 0x70,
                 asset_path: 0x10,
                 build_index: 0x98,
-                root_storage_container: 0xF0,
+                root_storage_container: 0xB8,
                 game_object: 0x30,
                 game_object_name: 0x60,
                 game_object_activeself: 0x56,
