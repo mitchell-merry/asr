@@ -50,16 +50,16 @@ impl Class {
 
     fn class_kind(&self, process: &Process, module: &Module) -> Result<u8, Error> {
         match module.version {
-            // https://github.com/mono/mono/blob/0f53e9e151d92944cacab3e24ac359410c606df6/mono/metadata/class-accessors.c#L216
+            // https://github.com/mono/mono/blob/337052f86112fc0dc8435c5c4a2de43b399a14bb/mono/metadata/class-internals.h#L327            Version::V3 => process.read::<u8>(self.class + module.offsets.class.class_kind),
             Version::V2 => {
-                let byte = process.read::<u8>(self.class + 0x2A)?;
+                let byte = process.read::<u8>(self.class + module.offsets.class.class_kind)?;
                 print_message(&format!("class kind byte {:X}", byte));
 
                 Ok(byte & 0x7u8)
             }
-            // https://github.com/vargaz/mono/blob/337052f86112fc0dc8435c5c4a2de43b399a14bb/mono/metadata/class-internals.h#L327
+            // https://github.com/mono/mono/blob/0f53e9e151d92944cacab3e24ac359410c606df6/mono/metadata/class-private-definition.h#L28_ => Err(Error {}),
             Version::V3 => process.read::<u8>(self.class + 0x1B),
-            _ => return Err(Error {}),
+            _ => Err(Error {}),
         }
     }
 
@@ -76,8 +76,10 @@ impl Class {
                 match class_kind {
                     1 | 2 => process.read::<i32>(self.class + module.offsets.class.field_count),
                     3 => {
-                        let generic_class =
-                            process.read_pointer(self.class + 0xF0, module.get_pointer_size())?;
+                        let generic_class = process.read_pointer(
+                            self.class + module.offsets.class.generic_class,
+                            module.get_pointer_size(),
+                        )?;
                         print_message(&format!("generic class {}", generic_class));
                         let container_class = Class {
                             class: process
