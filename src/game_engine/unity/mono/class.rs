@@ -10,22 +10,26 @@ use bytemuck::CheckedBitPattern;
 
 /// The kind of MonoClass.
 /// See https://github.com/mono/mono/blob/0f53e9e151d92944cacab3e24ac359410c606df6/mono/metadata/class-internals.h#L267
-#[derive(CheckedBitPattern, Copy, Clone, Debug, PartialEq, Eq)]
+#[derive(CheckedBitPattern, Copy, Clone, Debug, Default, PartialEq, Eq)]
 #[repr(u8)]
+#[allow(unused)]
 enum MonoTypeKind {
     /// Non-generic type
     DEF = 1,
     /// Generic type definition
-    GTD,
+    GTD = 2,
     /// Generic instantiation
-    GINST,
+    GINST = 3,
     /// Generic parameter
-    GPARAM,
+    GPARAM = 4,
     /// vector or array
-    ARRAY,
+    ARRAY = 5,
     /// pointer or function pointer
-    POINTER,
-    GC_FILTER,
+    POINTER = 6,
+    GC_FILTER = 0xAC,
+
+    #[default]
+    Unknown,
 }
 
 /// A .NET class that is part of an [`Image`](Image).
