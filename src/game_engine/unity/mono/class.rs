@@ -48,21 +48,37 @@ impl Class {
             .and_then(|addr| process.read(addr))
     }
 
+    fn class_kind(&self, process: &Process, module: &Module) -> Result<u8, Error> {
+        match module.version {
+            // https://github.com/mono/mono/blob/0f53e9e151d92944cacab3e24ac359410c606df6/mono/metadata/class-accessors.c#L216
+            Version::V2 => {
+                let byte = process.read::<u8>(self.class + 0x2A)?;
+                print_message(&format!("class kind byte {:X}", byte));
+
+                Ok(byte & 0x7u8)
+            }
+            // https://github.com/vargaz/mono/blob/337052f86112fc0dc8435c5c4a2de43b399a14bb/mono/metadata/class-internals.h#L327
+            Version::V3 => process.read::<u8>(self.class + 0x1B),
+            _ => return Err(Error {}),
+        }
+    }
+
     fn field_count(&self, process: &Process, module: &Module) -> Result<i32, Error> {
         match module.version {
             Version::V1 | Version::V1Cattrs => {
                 process.read::<i32>(self.class + module.offsets.class.field_count)
             }
-            Version::V3 => {
-                // https://github.com/mono/mono/blob/0f53e9e151d92944cacab3e24ac359410c606df6/mono/metadata/class-accessors.c#L216
-                let class_kind = process.read::<u8>(self.class + 0x1B)?;
+            Version::V2 | Version::V3 => {
+                let class_kind = self.class_kind(process, module)?;
                 print_message(&format!("class kind {}", class_kind));
 
+                // https://github.com/mono/mono/blob/0f53e9e151d92944cacab3e24ac359410c606df6/mono/metadata/class-accessors.c#L216
                 match class_kind {
                     1 | 2 => process.read::<i32>(self.class + module.offsets.class.field_count),
                     3 => {
                         let generic_class =
-                            process.read_pointer(self.class + 0xB0, module.get_pointer_size())?;
+                            process.read_pointer(self.class + 0xF0, module.get_pointer_size())?;
+                        print_message(&format!("generic class {}", generic_class));
                         let container_class = Class {
                             class: process
                                 .read_pointer(generic_class + 0x0, module.get_pointer_size())?,
@@ -147,10 +163,10 @@ impl Class {
         self.fields(process, module)
             .find(|field| {
                 field.get_name::<CSTR>(process, module).is_ok_and(|name| {
-                    // print_message(&format!(
-                    //     "field {}",
-                    //     name.validate_utf8().unwrap_or_default()
-                    // ));
+                    print_message(&format!(
+                        "field {}",
+                        name.validate_utf8().unwrap_or_default()
+                    ));
                     // If the name matches, return immediately
                     name.matches(field_name)
 
