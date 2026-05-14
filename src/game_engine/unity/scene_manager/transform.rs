@@ -1,12 +1,16 @@
 use super::{GameObject, SceneManager, CSTR};
-use crate::{string::ArrayCString, Address, Address32, Address64, Error, PointerSize, Process};
+use crate::{
+    print_message, string::ArrayCString, Address, Address32, Address64, Error, PointerSize, Process,
+};
+use alloc::format;
 use core::{array, mem::MaybeUninit};
 
 /// A `Transform` is a base class for all entities used in a Unity scene. All
 /// classes of interest useful for an auto splitter can be found starting from
 /// the addresses of the root `Transform`s linked in each scene.
+#[derive(Debug)]
 pub struct Transform {
-    pub(super) address: Address,
+    pub address: Address,
 }
 
 impl Transform {
@@ -66,6 +70,7 @@ impl Transform {
         if child_count == 0 || child_count > ARRAY_SIZE {
             return Err(Error {});
         }
+        print_message(&format!("cc {child_count}"));
 
         let children: [Address; ARRAY_SIZE] = match scene_manager.pointer_size {
             PointerSize::Bit64 => {

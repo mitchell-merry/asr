@@ -4,8 +4,9 @@ use core::iter;
 use core::iter::FusedIterator;
 
 /// A scene loaded in the attached game.
+#[derive(Debug)]
 pub struct Scene {
-    pub(super) address: Address,
+    pub address: Address,
 }
 
 impl Scene {
@@ -48,7 +49,7 @@ impl Scene {
     /// (and so on), as well as a list of `Component`s, which are classes (eg.
     /// `MonoBehaviour`) containing data we might want to retrieve for the auto
     /// splitter logic.
-    fn root_game_objects<'a>(
+    pub fn root_game_objects<'a>(
         &'a self,
         process: &'a Process,
         scene_manager: &'a SceneManager,
