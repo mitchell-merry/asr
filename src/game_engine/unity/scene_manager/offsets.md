@@ -1,3 +1,9 @@
+# todo
+
+- check the asr can load the classes (log 'em)
+- check the other scenes loaded
+    - can we get "is loading"?
+
 # project setup
 
 - scene 1
