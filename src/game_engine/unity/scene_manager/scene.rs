@@ -79,7 +79,7 @@ impl Scene {
             };
 
             if next == list_first? {
-                current_list = None;
+                return None;
             } else {
                 current_list = Some(next);
             }
