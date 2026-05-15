@@ -8,6 +8,7 @@
         - classes:
             - RestartScript
     - other default GOs under
+        - disable MainCamera audio listener
 - scene 2
     - (empty)
 
@@ -15,7 +16,11 @@ build profiles:
 
 - w/ dev on/off
 - scene list has both
-- player settings -> ScriptingBackend Mono/Il2Cpp
+
+player settings:
+
+- ScriptingBackend Mono/Il2Cpp
+- Active Input Handling - Old
 
 # lib
 
@@ -24,6 +29,7 @@ build profiles:
 ```cs
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -32,20 +38,42 @@ public class RestartScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
+        Time.timeScale = 1f;
+
         if (Input.GetKeyDown(KeyCode.R))
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            UnityEngine.Debug.Log("reloading scene");
+            SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
+        }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            UnityEngine.Debug.Log("loading scene 1 additively");
+            SceneManager.LoadSceneAsync("scene 1", LoadSceneMode.Additive);
         }
 
         if (Input.GetKeyDown(KeyCode.F))
         {
-            SceneManager.LoadScene("scene 2", LoadSceneMode.Additive);
+            UnityEngine.Debug.Log("loading scene 2 additively");
+            SceneManager.LoadSceneAsync("scene 2", LoadSceneMode.Additive);
+        }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            UnityEngine.Debug.Log("loading scene 1 singly");
+            SceneManager.LoadSceneAsync("scene 1");
+        }
+
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            UnityEngine.Debug.Log("loading scene 2 singly");
+            SceneManager.LoadSceneAsync("scene 2");
         }
     }
 }
