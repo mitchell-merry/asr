@@ -18,7 +18,7 @@ use assembly::Assembly;
 mod image;
 pub use image::Image;
 mod class;
-pub use class::Class;
+pub use class::{Class, Object};
 mod field;
 use field::Field;
 mod version;

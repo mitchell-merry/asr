@@ -13,21 +13,6 @@ pub struct Class {
 }
 
 impl Class {
-    pub fn get_from_component(
-        process: &Process,
-        module: &Module,
-        component: Address,
-    ) -> Result<Self, Error> {
-        process
-            .read_pointer(component, module.pointer_size)
-            .ok()
-            .filter(|val| !val.is_null())
-            .and_then(|addr| process.read_pointer(addr, module.pointer_size).ok())
-            .filter(|val| !val.is_null())
-            .map(|class| Class { class })
-            .ok_or(Error {})
-    }
-
     pub fn get_name<const N: usize>(
         &self,
         process: &Process,
@@ -228,5 +213,31 @@ impl Class {
     /// [`get_parent`](Self::get_parent) function.
     pub async fn wait_get_parent(&self, process: &Process, module: &Module) -> Class {
         retry(|| self.get_parent(process, module)).await
+    }
+}
+
+/** Represents a MonoObject, which is an instantiation of a MonoVTable (and therefore MonoClass). It
+ * is where the actual fields of the class live.
+ *
+ * See https://github.com/mono/mono/blob/0f53e9e151d92944cacab3e24ac359410c606df6/mono/metadata/object.h#L31.
+ */
+pub struct Object {
+    pub address: Address,
+}
+
+impl Object {
+    pub fn get_class(&self, process: &Process, module: &Module) -> Result<Class, Error> {
+        process
+            // MonoVTable *vtable
+            // See https://github.com/mono/mono/blob/0f53e9e151d92944cacab3e24ac359410c606df6/mono/metadata/object.h#L32
+            .read_pointer(self.address, module.pointer_size)
+            .ok()
+            .filter(|val| !val.is_null())
+            // MonoClass *klass
+            // See https://github.com/mono/mono/blob/0f53e9e151d92944cacab3e24ac359410c606df6/mono/metadata/class-internals.h#L360
+            .and_then(|addr| process.read_pointer(addr, module.pointer_size).ok())
+            .filter(|val| !val.is_null())
+            .map(|class| Class { class })
+            .ok_or(Error {})
     }
 }

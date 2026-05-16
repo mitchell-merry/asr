@@ -26,6 +26,8 @@ use offsets::Offsets;
 mod game_object;
 pub use game_object::GameObject;
 
+mod component;
+pub use component::Component;
 mod scene;
 
 pub use scene::Scene;
