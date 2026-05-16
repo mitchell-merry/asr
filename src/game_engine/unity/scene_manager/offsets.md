@@ -1,5 +1,7 @@
 # todo
 
+- fix mono (v4?)
+    - check if we can get special
 - check the asr can load the classes (log 'em)
 - check the other scenes loaded
     - can we get "is loading"?
@@ -41,10 +43,16 @@ using UnityEngine.SceneManagement;
 
 public class RestartScript : MonoBehaviour
 {
+    static int myStatic = 0x73399007;
+    public int special = 0x191B1D1F;
+    public int FPS = 60;
+
     // Start is called before the first frame update
     void Start()
     {
+        QualitySettings.vSyncCount = 1;
 
+        Application.targetFrameRate = FPS;
     }
 
     // Update is called once per frame
@@ -161,7 +169,7 @@ class_name = 0x48
 
 # Unity 6000.4.5f1
 
-### 64 bit windows
+## 64 bit windows
 
 ```lua
 is_dev_build = false
@@ -194,6 +202,45 @@ children = 0x48 + (is_dev_build and go_dev or 0)
 classes = game_object
 class_mono = 0x28 + (is_dev_build and co_dev or 0)
 class_name_mono = 0x48
+class_il2cpp = 0x18
+class_name_il2cpp = 0x10
+```
+
+## 64 bit mono
+
+```lua
+is_dev_build = false
+go_dev = 0x10 -- size of EditorExtensions
+co_dev = 0x8
+
+pointer_size = 0x8
+
+scene_manager = sig("41 54 53 50 4C 8B ?5 ???????? 41 83", 7, 7)
+
+loaded_scenes = 0x8
+scene_count = 0x18
+active_scene = 0x48
+dont_destroy_on_load_scene = 0x70
+
+asset_path = 0x10
+build_index = 0x98
+root_storage_container = 0xF0
+
+prev_node = 0x0
+next_node = 0x8
+current_node = 0x10
+
+game_object = 0x20 + (is_dev_build and go_dev or 0)
+game_object_name = 0x50 + (is_dev_build and go_dev or 0)
+active_self = 0x46 + (is_dev_build and go_dev or 0)
+active_in_hierarchy = 0x47 + (is_dev_build and go_dev or 0)
+children = 0x48 + (is_dev_build and go_dev or 0)
+
+classes = game_object
+class_mono = 0x18 + (is_dev_build and co_dev or 0)
+-- has extra dereference
+-- component.m_MonoReference->raw->vtable->class->name
+class_name_mono = 0x40
 class_il2cpp = 0x18
 class_name_il2cpp = 0x10
 ```

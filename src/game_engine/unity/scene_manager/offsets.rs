@@ -29,7 +29,7 @@ impl Offsets {
                 game_object_name: 0x50,
                 game_object_activeself: 0x46,
                 game_object_activeinhierarchy: 0x47,
-                klass: 0x28,
+                klass: 0xE0,
                 children_pointer: 0x48,
             }),
             PointerSize::Bit32 => Some(&Self {

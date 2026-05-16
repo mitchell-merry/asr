@@ -202,6 +202,8 @@ impl Module {
             _ => return None,
         };
 
+        print_message("attached");
+
         Some(Self {
             assemblies,
             version,

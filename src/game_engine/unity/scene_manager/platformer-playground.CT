@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<CheatTable CheatEngineTableVersion="46">
+<CheatTable CheatEngineTableVersion="48">
   <CheatEntries>
     <CheatEntry>
       <ID>0</ID>
@@ -184,7 +184,7 @@
                   <VariableType>8 Bytes</VariableType>
                   <Address>+0</Address>
                   <Offsets>
-                    <Offset>current</Offset>
+                    <Offset>0x010</Offset>
                   </Offsets>
                   <CheatEntries>
                     <CheatEntry>
@@ -232,7 +232,7 @@
                       <VariableType>4 Bytes</VariableType>
                       <Address>+0</Address>
                       <Offsets>
-                        <Offset>children + pointer_size * 2</Offset>
+                        <Offset>children + 0x008 * 2</Offset>
                       </Offsets>
                     </CheatEntry>
                     <CheatEntry>
@@ -375,7 +375,7 @@
                       <VariableType>4 Bytes</VariableType>
                       <Address>+0</Address>
                       <Offsets>
-                        <Offset>classes + pointer_size * 2</Offset>
+                        <Offset>classes + 0x008 * 2</Offset>
                         <Offset>game_object</Offset>
                       </Offsets>
                     </CheatEntry>
@@ -387,7 +387,7 @@
                       <VariableType>8 Bytes</VariableType>
                       <Address>+0</Address>
                       <Offsets>
-                        <Offset>classes</Offset>
+                        <Offset>game_object</Offset>
                         <Offset>game_object</Offset>
                       </Offsets>
                       <CheatEntries>
@@ -399,7 +399,7 @@
                           <VariableType>8 Bytes</VariableType>
                           <Address>+0</Address>
                           <Offsets>
-                            <Offset>pointer_size + (pointer_size * 2) * 0</Offset>
+                            <Offset>0x008 + (0x008 * 2) * 0</Offset>
                           </Offsets>
                           <CheatEntries>
                             <CheatEntry>
@@ -450,7 +450,7 @@
                           <VariableType>8 Bytes</VariableType>
                           <Address>+0</Address>
                           <Offsets>
-                            <Offset>pointer_size + (pointer_size * 2) * 1</Offset>
+                            <Offset>0x008 + (0x008 * 2) * 1</Offset>
                           </Offsets>
                           <CheatEntries>
                             <CheatEntry>
@@ -493,6 +493,108 @@
                             </CheatEntry>
                           </CheatEntries>
                         </CheatEntry>
+                        <CheatEntry>
+                          <ID>160</ID>
+                          <Description>"[2]"</Description>
+                          <Options moManualExpandCollapse="1"/>
+                          <ShowAsSigned>0</ShowAsSigned>
+                          <VariableType>8 Bytes</VariableType>
+                          <Address>+0</Address>
+                          <Offsets>
+                            <Offset>0x008 + (0x008 * 2) * 2</Offset>
+                          </Offsets>
+                          <CheatEntries>
+                            <CheatEntry>
+                              <ID>161</ID>
+                              <Description>"class name (mono)"</Description>
+                              <Options moManualExpandCollapse="1"/>
+                              <ShowAsSigned>0</ShowAsSigned>
+                              <VariableType>String</VariableType>
+                              <Length>10</Length>
+                              <Unicode>0</Unicode>
+                              <CodePage>0</CodePage>
+                              <ZeroTerminate>1</ZeroTerminate>
+                              <Address>+0</Address>
+                              <Offsets>
+                                <Offset>0</Offset>
+                                <Offset>class_name_mono</Offset>
+                                <Offset>0</Offset>
+                                <Offset>0</Offset>
+                                <Offset>class_mono</Offset>
+                              </Offsets>
+                            </CheatEntry>
+                            <CheatEntry>
+                              <ID>162</ID>
+                              <Description>"class name (il2cpp)"</Description>
+                              <Options moManualExpandCollapse="1"/>
+                              <ShowAsSigned>0</ShowAsSigned>
+                              <VariableType>String</VariableType>
+                              <Length>10</Length>
+                              <Unicode>0</Unicode>
+                              <CodePage>0</CodePage>
+                              <ZeroTerminate>1</ZeroTerminate>
+                              <Address>+0</Address>
+                              <Offsets>
+                                <Offset>0</Offset>
+                                <Offset>class_name_il2cpp</Offset>
+                                <Offset>0</Offset>
+                                <Offset>0</Offset>
+                                <Offset>class_il2cpp</Offset>
+                              </Offsets>
+                            </CheatEntry>
+                          </CheatEntries>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>157</ID>
+                          <Description>"[3]"</Description>
+                          <Options moManualExpandCollapse="1"/>
+                          <ShowAsSigned>0</ShowAsSigned>
+                          <VariableType>8 Bytes</VariableType>
+                          <Address>+0</Address>
+                          <Offsets>
+                            <Offset>0x008 + (0x008 * 2) * 3</Offset>
+                          </Offsets>
+                          <CheatEntries>
+                            <CheatEntry>
+                              <ID>158</ID>
+                              <Description>"class name (mono)"</Description>
+                              <Options moManualExpandCollapse="1"/>
+                              <ShowAsSigned>0</ShowAsSigned>
+                              <VariableType>String</VariableType>
+                              <Length>50</Length>
+                              <Unicode>0</Unicode>
+                              <CodePage>0</CodePage>
+                              <ZeroTerminate>1</ZeroTerminate>
+                              <Address>+0</Address>
+                              <Offsets>
+                                <Offset>0</Offset>
+                                <Offset>class_name_mono</Offset>
+                                <Offset>0</Offset>
+                                <Offset>0</Offset>
+                                <Offset>class_mono</Offset>
+                              </Offsets>
+                            </CheatEntry>
+                            <CheatEntry>
+                              <ID>159</ID>
+                              <Description>"class name (il2cpp)"</Description>
+                              <Options moManualExpandCollapse="1"/>
+                              <ShowAsSigned>0</ShowAsSigned>
+                              <VariableType>String</VariableType>
+                              <Length>10</Length>
+                              <Unicode>0</Unicode>
+                              <CodePage>0</CodePage>
+                              <ZeroTerminate>1</ZeroTerminate>
+                              <Address>+0</Address>
+                              <Offsets>
+                                <Offset>0</Offset>
+                                <Offset>class_name_il2cpp</Offset>
+                                <Offset>0</Offset>
+                                <Offset>0</Offset>
+                                <Offset>class_il2cpp</Offset>
+                              </Offsets>
+                            </CheatEntry>
+                          </CheatEntries>
+                        </CheatEntry>
                       </CheatEntries>
                     </CheatEntry>
                   </CheatEntries>
@@ -506,7 +608,7 @@
                   <VariableType>8 Bytes</VariableType>
                   <Address>+0</Address>
                   <Offsets>
-                    <Offset>next</Offset>
+                    <Offset>0x08</Offset>
                   </Offsets>
                   <CheatEntries>
                     <CheatEntry>
@@ -517,7 +619,7 @@
                       <VariableType>8 Bytes</VariableType>
                       <Address>+0</Address>
                       <Offsets>
-                        <Offset>current</Offset>
+                        <Offset>0x010</Offset>
                       </Offsets>
                       <CheatEntries>
                         <CheatEntry>
@@ -536,6 +638,235 @@
                             <Offset>game_object</Offset>
                           </Offsets>
                         </CheatEntry>
+                        <CheatEntry>
+                          <ID>163</ID>
+                          <Description>"classes size"</Description>
+                          <ShowAsSigned>0</ShowAsSigned>
+                          <VariableType>4 Bytes</VariableType>
+                          <Address>+0</Address>
+                          <Offsets>
+                            <Offset>classes + 0x008 * 2</Offset>
+                            <Offset>game_object</Offset>
+                          </Offsets>
+                        </CheatEntry>
+                        <CheatEntry>
+                          <ID>164</ID>
+                          <Description>"classes"</Description>
+                          <Options moManualExpandCollapse="1"/>
+                          <ShowAsSigned>0</ShowAsSigned>
+                          <VariableType>8 Bytes</VariableType>
+                          <Address>+0</Address>
+                          <Offsets>
+                            <Offset>game_object</Offset>
+                            <Offset>game_object</Offset>
+                          </Offsets>
+                          <CheatEntries>
+                            <CheatEntry>
+                              <ID>165</ID>
+                              <Description>"[0]"</Description>
+                              <Options moManualExpandCollapse="1"/>
+                              <ShowAsSigned>0</ShowAsSigned>
+                              <VariableType>8 Bytes</VariableType>
+                              <Address>+0</Address>
+                              <Offsets>
+                                <Offset>0x008 + (0x008 * 2) * 0</Offset>
+                              </Offsets>
+                              <CheatEntries>
+                                <CheatEntry>
+                                  <ID>166</ID>
+                                  <Description>"class name (mono)"</Description>
+                                  <Options moManualExpandCollapse="1"/>
+                                  <ShowAsSigned>0</ShowAsSigned>
+                                  <VariableType>String</VariableType>
+                                  <Length>10</Length>
+                                  <Unicode>0</Unicode>
+                                  <CodePage>0</CodePage>
+                                  <ZeroTerminate>1</ZeroTerminate>
+                                  <Address>+0</Address>
+                                  <Offsets>
+                                    <Offset>0</Offset>
+                                    <Offset>class_name_mono</Offset>
+                                    <Offset>0</Offset>
+                                    <Offset>0</Offset>
+                                    <Offset>class_mono</Offset>
+                                  </Offsets>
+                                </CheatEntry>
+                                <CheatEntry>
+                                  <ID>167</ID>
+                                  <Description>"class name (il2cpp)"</Description>
+                                  <Options moManualExpandCollapse="1"/>
+                                  <ShowAsSigned>0</ShowAsSigned>
+                                  <VariableType>String</VariableType>
+                                  <Length>10</Length>
+                                  <Unicode>0</Unicode>
+                                  <CodePage>0</CodePage>
+                                  <ZeroTerminate>1</ZeroTerminate>
+                                  <Address>+0</Address>
+                                  <Offsets>
+                                    <Offset>0</Offset>
+                                    <Offset>class_name_il2cpp</Offset>
+                                    <Offset>0</Offset>
+                                    <Offset>0</Offset>
+                                    <Offset>class_il2cpp</Offset>
+                                  </Offsets>
+                                </CheatEntry>
+                              </CheatEntries>
+                            </CheatEntry>
+                            <CheatEntry>
+                              <ID>168</ID>
+                              <Description>"[1]"</Description>
+                              <Options moManualExpandCollapse="1"/>
+                              <ShowAsSigned>0</ShowAsSigned>
+                              <VariableType>8 Bytes</VariableType>
+                              <Address>+0</Address>
+                              <Offsets>
+                                <Offset>0x008 + (0x008 * 2) * 1</Offset>
+                              </Offsets>
+                              <CheatEntries>
+                                <CheatEntry>
+                                  <ID>169</ID>
+                                  <Description>"class name (mono)"</Description>
+                                  <Options moManualExpandCollapse="1"/>
+                                  <ShowAsSigned>0</ShowAsSigned>
+                                  <VariableType>String</VariableType>
+                                  <Length>10</Length>
+                                  <Unicode>0</Unicode>
+                                  <CodePage>0</CodePage>
+                                  <ZeroTerminate>1</ZeroTerminate>
+                                  <Address>+0</Address>
+                                  <Offsets>
+                                    <Offset>0</Offset>
+                                    <Offset>class_name_mono</Offset>
+                                    <Offset>0</Offset>
+                                    <Offset>0</Offset>
+                                    <Offset>class_mono</Offset>
+                                  </Offsets>
+                                </CheatEntry>
+                                <CheatEntry>
+                                  <ID>170</ID>
+                                  <Description>"class name (il2cpp)"</Description>
+                                  <Options moManualExpandCollapse="1"/>
+                                  <ShowAsSigned>0</ShowAsSigned>
+                                  <VariableType>String</VariableType>
+                                  <Length>10</Length>
+                                  <Unicode>0</Unicode>
+                                  <CodePage>0</CodePage>
+                                  <ZeroTerminate>1</ZeroTerminate>
+                                  <Address>+0</Address>
+                                  <Offsets>
+                                    <Offset>0</Offset>
+                                    <Offset>class_name_il2cpp</Offset>
+                                    <Offset>0</Offset>
+                                    <Offset>0</Offset>
+                                    <Offset>class_il2cpp</Offset>
+                                  </Offsets>
+                                </CheatEntry>
+                              </CheatEntries>
+                            </CheatEntry>
+                            <CheatEntry>
+                              <ID>171</ID>
+                              <Description>"[2]"</Description>
+                              <Options moManualExpandCollapse="1"/>
+                              <ShowAsSigned>0</ShowAsSigned>
+                              <VariableType>8 Bytes</VariableType>
+                              <Address>+0</Address>
+                              <Offsets>
+                                <Offset>0x008 + (0x008 * 2) * 2</Offset>
+                              </Offsets>
+                              <CheatEntries>
+                                <CheatEntry>
+                                  <ID>172</ID>
+                                  <Description>"class name (mono)"</Description>
+                                  <Options moManualExpandCollapse="1"/>
+                                  <ShowAsSigned>0</ShowAsSigned>
+                                  <VariableType>String</VariableType>
+                                  <Length>100</Length>
+                                  <Unicode>0</Unicode>
+                                  <CodePage>0</CodePage>
+                                  <ZeroTerminate>1</ZeroTerminate>
+                                  <Address>+0</Address>
+                                  <Offsets>
+                                    <Offset>0</Offset>
+                                    <Offset>class_name_mono</Offset>
+                                    <Offset>0</Offset>
+                                    <Offset>0</Offset>
+                                    <Offset>class_mono</Offset>
+                                  </Offsets>
+                                </CheatEntry>
+                                <CheatEntry>
+                                  <ID>173</ID>
+                                  <Description>"class name (il2cpp)"</Description>
+                                  <Options moManualExpandCollapse="1"/>
+                                  <ShowAsSigned>0</ShowAsSigned>
+                                  <VariableType>String</VariableType>
+                                  <Length>10</Length>
+                                  <Unicode>0</Unicode>
+                                  <CodePage>0</CodePage>
+                                  <ZeroTerminate>1</ZeroTerminate>
+                                  <Address>+0</Address>
+                                  <Offsets>
+                                    <Offset>0</Offset>
+                                    <Offset>class_name_il2cpp</Offset>
+                                    <Offset>0</Offset>
+                                    <Offset>0</Offset>
+                                    <Offset>class_il2cpp</Offset>
+                                  </Offsets>
+                                </CheatEntry>
+                              </CheatEntries>
+                            </CheatEntry>
+                            <CheatEntry>
+                              <ID>174</ID>
+                              <Description>"[3]"</Description>
+                              <Options moManualExpandCollapse="1"/>
+                              <ShowAsSigned>0</ShowAsSigned>
+                              <VariableType>8 Bytes</VariableType>
+                              <Address>+0</Address>
+                              <Offsets>
+                                <Offset>0x008 + (0x008 * 2) * 3</Offset>
+                              </Offsets>
+                              <CheatEntries>
+                                <CheatEntry>
+                                  <ID>175</ID>
+                                  <Description>"class name (mono)"</Description>
+                                  <Options moManualExpandCollapse="1"/>
+                                  <ShowAsSigned>0</ShowAsSigned>
+                                  <VariableType>String</VariableType>
+                                  <Length>50</Length>
+                                  <Unicode>0</Unicode>
+                                  <CodePage>0</CodePage>
+                                  <ZeroTerminate>1</ZeroTerminate>
+                                  <Address>+0</Address>
+                                  <Offsets>
+                                    <Offset>0</Offset>
+                                    <Offset>class_name_mono</Offset>
+                                    <Offset>0</Offset>
+                                    <Offset>0</Offset>
+                                    <Offset>class_mono</Offset>
+                                  </Offsets>
+                                </CheatEntry>
+                                <CheatEntry>
+                                  <ID>176</ID>
+                                  <Description>"class name (il2cpp)"</Description>
+                                  <Options moManualExpandCollapse="1"/>
+                                  <ShowAsSigned>0</ShowAsSigned>
+                                  <VariableType>String</VariableType>
+                                  <Length>10</Length>
+                                  <Unicode>0</Unicode>
+                                  <CodePage>0</CodePage>
+                                  <ZeroTerminate>1</ZeroTerminate>
+                                  <Address>+0</Address>
+                                  <Offsets>
+                                    <Offset>0</Offset>
+                                    <Offset>class_name_il2cpp</Offset>
+                                    <Offset>0</Offset>
+                                    <Offset>0</Offset>
+                                    <Offset>class_il2cpp</Offset>
+                                  </Offsets>
+                                </CheatEntry>
+                              </CheatEntries>
+                            </CheatEntry>
+                          </CheatEntries>
+                        </CheatEntry>
                       </CheatEntries>
                     </CheatEntry>
                     <CheatEntry>
@@ -547,7 +878,7 @@
                       <VariableType>8 Bytes</VariableType>
                       <Address>+0</Address>
                       <Offsets>
-                        <Offset>next</Offset>
+                        <Offset>0x08</Offset>
                       </Offsets>
                       <CheatEntries>
                         <CheatEntry>
@@ -558,7 +889,7 @@
                           <VariableType>8 Bytes</VariableType>
                           <Address>+0</Address>
                           <Offsets>
-                            <Offset>current</Offset>
+                            <Offset>0x010</Offset>
                           </Offsets>
                           <CheatEntries>
                             <CheatEntry>
@@ -652,7 +983,7 @@
                           <VariableType>8 Bytes</VariableType>
                           <Address>+0</Address>
                           <Offsets>
-                            <Offset>next</Offset>
+                            <Offset>0x08</Offset>
                           </Offsets>
                           <CheatEntries>
                             <CheatEntry>
@@ -663,7 +994,7 @@
                               <VariableType>8 Bytes</VariableType>
                               <Address>+0</Address>
                               <Offsets>
-                                <Offset>current</Offset>
+                                <Offset>0x010</Offset>
                               </Offsets>
                               <CheatEntries>
                                 <CheatEntry>
@@ -689,7 +1020,7 @@
                                   <VariableType>4 Bytes</VariableType>
                                   <Address>+0</Address>
                                   <Offsets>
-                                    <Offset>children + pointer_size * 2</Offset>
+                                    <Offset>children + 0x008 * 2</Offset>
                                   </Offsets>
                                 </CheatEntry>
                                 <CheatEntry>
@@ -832,7 +1163,7 @@
                                   <VariableType>4 Bytes</VariableType>
                                   <Address>+0</Address>
                                   <Offsets>
-                                    <Offset>classes + pointer_size * 2</Offset>
+                                    <Offset>classes  + 0x008 * 2</Offset>
                                     <Offset>game_object</Offset>
                                   </Offsets>
                                 </CheatEntry>
@@ -844,7 +1175,7 @@
                                   <VariableType>8 Bytes</VariableType>
                                   <Address>+0</Address>
                                   <Offsets>
-                                    <Offset>classes</Offset>
+                                    <Offset>game_object</Offset>
                                     <Offset>game_object</Offset>
                                   </Offsets>
                                   <CheatEntries>
@@ -856,11 +1187,11 @@
                                       <VariableType>8 Bytes</VariableType>
                                       <Address>+0</Address>
                                       <Offsets>
-                                        <Offset>pointer_size + (pointer_size * 2) * 0</Offset>
+                                        <Offset>0x008 + (0x008 * 2) * 0</Offset>
                                       </Offsets>
                                       <CheatEntries>
                                         <CheatEntry>
-                                          <ID>132</ID>
+                                          <ID>156</ID>
                                           <Description>"class name (mono)"</Description>
                                           <Options moManualExpandCollapse="1"/>
                                           <ShowAsSigned>0</ShowAsSigned>
@@ -903,15 +1234,16 @@
                                       <ID>128</ID>
                                       <Description>"[1]"</Description>
                                       <Options moManualExpandCollapse="1"/>
+                                      <ShowAsHex>1</ShowAsHex>
                                       <ShowAsSigned>0</ShowAsSigned>
                                       <VariableType>8 Bytes</VariableType>
                                       <Address>+0</Address>
                                       <Offsets>
-                                        <Offset>pointer_size + (pointer_size * 2) * 1</Offset>
+                                        <Offset>0x008 + (0x008 * 2) * 1</Offset>
                                       </Offsets>
                                       <CheatEntries>
                                         <CheatEntry>
-                                          <ID>129</ID>
+                                          <ID>155</ID>
                                           <Description>"class name (mono)"</Description>
                                           <Options moManualExpandCollapse="1"/>
                                           <ShowAsSigned>0</ShowAsSigned>
@@ -928,6 +1260,110 @@
                                             <Offset>0</Offset>
                                             <Offset>class_mono</Offset>
                                           </Offsets>
+                                        </CheatEntry>
+                                        <CheatEntry>
+                                          <ID>177</ID>
+                                          <Description>"class name (mono… 4?)"</Description>
+                                          <Options moManualExpandCollapse="1"/>
+                                          <ShowAsSigned>0</ShowAsSigned>
+                                          <VariableType>String</VariableType>
+                                          <Length>10</Length>
+                                          <Unicode>0</Unicode>
+                                          <CodePage>0</CodePage>
+                                          <ZeroTerminate>1</ZeroTerminate>
+                                          <Address>+0</Address>
+                                          <Offsets>
+                                            <Offset>0</Offset>
+                                            <Offset>class_name_mono</Offset>
+                                            <Offset>0</Offset>
+                                            <Offset>0</Offset>
+                                            <Offset>0</Offset>
+                                            <Offset>0x18</Offset>
+                                          </Offsets>
+                                        </CheatEntry>
+                                        <CheatEntry>
+                                          <ID>178</ID>
+                                          <Description>"monoobjecthandle (v4?)"</Description>
+                                          <Options moManualExpandCollapse="1"/>
+                                          <ShowAsHex>1</ShowAsHex>
+                                          <ShowAsSigned>0</ShowAsSigned>
+                                          <VariableType>8 Bytes</VariableType>
+                                          <Address>+0</Address>
+                                          <Offsets>
+                                            <Offset>0x18</Offset>
+                                          </Offsets>
+                                          <CheatEntries>
+                                            <CheatEntry>
+                                              <ID>179</ID>
+                                              <Description>"monoobject*"</Description>
+                                              <Options moManualExpandCollapse="1"/>
+                                              <ShowAsHex>1</ShowAsHex>
+                                              <ShowAsSigned>0</ShowAsSigned>
+                                              <VariableType>8 Bytes</VariableType>
+                                              <Address>+0</Address>
+                                              <Offsets>
+                                                <Offset>0x0</Offset>
+                                              </Offsets>
+                                              <CheatEntries>
+                                                <CheatEntry>
+                                                  <ID>180</ID>
+                                                  <Description>"special"</Description>
+                                                  <Options moManualExpandCollapse="1"/>
+                                                  <ShowAsHex>1</ShowAsHex>
+                                                  <ShowAsSigned>0</ShowAsSigned>
+                                                  <VariableType>4 Bytes</VariableType>
+                                                  <Address>+0</Address>
+                                                  <Offsets>
+                                                    <Offset>0x20</Offset>
+                                                  </Offsets>
+                                                </CheatEntry>
+                                                <CheatEntry>
+                                                  <ID>181</ID>
+                                                  <Description>"monovtable*"</Description>
+                                                  <Options moManualExpandCollapse="1"/>
+                                                  <ShowAsHex>1</ShowAsHex>
+                                                  <ShowAsSigned>0</ShowAsSigned>
+                                                  <VariableType>8 Bytes</VariableType>
+                                                  <Address>+0</Address>
+                                                  <Offsets>
+                                                    <Offset>0x0</Offset>
+                                                  </Offsets>
+                                                  <CheatEntries>
+                                                    <CheatEntry>
+                                                      <ID>182</ID>
+                                                      <Description>"mono class*"</Description>
+                                                      <Options moManualExpandCollapse="1"/>
+                                                      <ShowAsHex>1</ShowAsHex>
+                                                      <ShowAsSigned>0</ShowAsSigned>
+                                                      <VariableType>4 Bytes</VariableType>
+                                                      <Address>+0</Address>
+                                                      <Offsets>
+                                                        <Offset>0</Offset>
+                                                      </Offsets>
+                                                      <CheatEntries>
+                                                        <CheatEntry>
+                                                          <ID>183</ID>
+                                                          <Description>"name"</Description>
+                                                          <Options moManualExpandCollapse="1"/>
+                                                          <ShowAsSigned>0</ShowAsSigned>
+                                                          <VariableType>String</VariableType>
+                                                          <Length>100</Length>
+                                                          <Unicode>0</Unicode>
+                                                          <CodePage>0</CodePage>
+                                                          <ZeroTerminate>1</ZeroTerminate>
+                                                          <Address>+0</Address>
+                                                          <Offsets>
+                                                            <Offset>0</Offset>
+                                                            <Offset>class_name_mono</Offset>
+                                                          </Offsets>
+                                                        </CheatEntry>
+                                                      </CheatEntries>
+                                                    </CheatEntry>
+                                                  </CheatEntries>
+                                                </CheatEntry>
+                                              </CheatEntries>
+                                            </CheatEntry>
+                                          </CheatEntries>
                                         </CheatEntry>
                                         <CheatEntry>
                                           <ID>131</ID>
@@ -961,7 +1397,7 @@
                                   <VariableType>8 Bytes</VariableType>
                                   <Address>+0</Address>
                                   <Offsets>
-                                    <Offset>next</Offset>
+                                    <Offset>0x08</Offset>
                                   </Offsets>
                                   <CheatEntries>
                                     <CheatEntry>
@@ -972,7 +1408,7 @@
                                       <VariableType>8 Bytes</VariableType>
                                       <Address>+0</Address>
                                       <Offsets>
-                                        <Offset>current</Offset>
+                                        <Offset>0x010</Offset>
                                       </Offsets>
                                       <CheatEntries>
                                         <CheatEntry>
@@ -1012,7 +1448,7 @@
                   <VariableType>8 Bytes</VariableType>
                   <Address>+0</Address>
                   <Offsets>
-                    <Offset>prev</Offset>
+                    <Offset>0x00</Offset>
                   </Offsets>
                   <CheatEntries>
                     <CheatEntry>
@@ -1029,7 +1465,7 @@
                         <Offset>0</Offset>
                         <Offset>game_object_name</Offset>
                         <Offset>game_object</Offset>
-                        <Offset>current</Offset>
+                        <Offset>0x010</Offset>
                       </Offsets>
                     </CheatEntry>
                     <CheatEntry>
@@ -1041,7 +1477,7 @@
                       <VariableType>8 Bytes</VariableType>
                       <Address>+0</Address>
                       <Offsets>
-                        <Offset>prev</Offset>
+                        <Offset>0x00</Offset>
                       </Offsets>
                       <CheatEntries>
                         <CheatEntry>
@@ -1058,7 +1494,7 @@
                             <Offset>0</Offset>
                             <Offset>game_object_name</Offset>
                             <Offset>game_object</Offset>
-                            <Offset>current</Offset>
+                            <Offset>0x010</Offset>
                           </Offsets>
                         </CheatEntry>
                         <CheatEntry>
@@ -1070,7 +1506,7 @@
                           <VariableType>8 Bytes</VariableType>
                           <Address>+0</Address>
                           <Offsets>
-                            <Offset>prev</Offset>
+                            <Offset>0x00</Offset>
                           </Offsets>
                           <CheatEntries>
                             <CheatEntry>
@@ -1087,7 +1523,7 @@
                                 <Offset>0</Offset>
                                 <Offset>game_object_name</Offset>
                                 <Offset>game_object</Offset>
-                                <Offset>current</Offset>
+                                <Offset>0x010</Offset>
                               </Offsets>
                             </CheatEntry>
                             <CheatEntry>
@@ -1099,7 +1535,7 @@
                               <VariableType>8 Bytes</VariableType>
                               <Address>+0</Address>
                               <Offsets>
-                                <Offset>prev</Offset>
+                                <Offset>0x00</Offset>
                               </Offsets>
                               <CheatEntries>
                                 <CheatEntry>
@@ -1116,7 +1552,7 @@
                                     <Offset>0</Offset>
                                     <Offset>game_object_name</Offset>
                                     <Offset>game_object</Offset>
-                                    <Offset>current</Offset>
+                                    <Offset>0x010</Offset>
                                   </Offsets>
                                 </CheatEntry>
                                 <CheatEntry>
@@ -1128,7 +1564,7 @@
                                   <VariableType>8 Bytes</VariableType>
                                   <Address>+0</Address>
                                   <Offsets>
-                                    <Offset>prev</Offset>
+                                    <Offset>0x00</Offset>
                                   </Offsets>
                                   <CheatEntries>
                                     <CheatEntry>
@@ -1145,7 +1581,7 @@
                                         <Offset>0</Offset>
                                         <Offset>game_object_name</Offset>
                                         <Offset>game_object</Offset>
-                                        <Offset>current</Offset>
+                                        <Offset>0x010</Offset>
                                       </Offsets>
                                     </CheatEntry>
                                   </CheatEntries>
@@ -1163,6 +1599,143 @@
           </CheatEntries>
         </CheatEntry>
       </CheatEntries>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>141</ID>
+      <Description>"No description"</Description>
+      <VariableType>String</VariableType>
+      <Length>13</Length>
+      <Unicode>0</Unicode>
+      <CodePage>0</CodePage>
+      <ZeroTerminate>1</ZeroTerminate>
+      <Address>113730BF4</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>142</ID>
+      <Description>"No description"</Description>
+      <VariableType>String</VariableType>
+      <Length>13</Length>
+      <Unicode>0</Unicode>
+      <CodePage>0</CodePage>
+      <ZeroTerminate>1</ZeroTerminate>
+      <Address>113730BF4</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>143</ID>
+      <Description>"No description"</Description>
+      <VariableType>String</VariableType>
+      <Length>13</Length>
+      <Unicode>0</Unicode>
+      <CodePage>0</CodePage>
+      <ZeroTerminate>1</ZeroTerminate>
+      <Address>10B9ECC18</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>144</ID>
+      <Description>"No description"</Description>
+      <VariableType>String</VariableType>
+      <Length>13</Length>
+      <Unicode>0</Unicode>
+      <CodePage>0</CodePage>
+      <ZeroTerminate>1</ZeroTerminate>
+      <Address>113730C1C</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>145</ID>
+      <Description>"No description"</Description>
+      <VariableType>String</VariableType>
+      <Length>13</Length>
+      <Unicode>0</Unicode>
+      <CodePage>0</CodePage>
+      <ZeroTerminate>1</ZeroTerminate>
+      <Address>12FF117F0</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>146</ID>
+      <Description>"No description"</Description>
+      <ShowAsHex>1</ShowAsHex>
+      <VariableType>8 Bytes</VariableType>
+      <Address>12FF11790</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>147</ID>
+      <Description>"No description"</Description>
+      <VariableType>String</VariableType>
+      <Length>13</Length>
+      <Unicode>0</Unicode>
+      <CodePage>0</CodePage>
+      <ZeroTerminate>1</ZeroTerminate>
+      <Address>7F84880A682C</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>148</ID>
+      <Description>"No description"</Description>
+      <VariableType>String</VariableType>
+      <Length>13</Length>
+      <Unicode>0</Unicode>
+      <CodePage>0</CodePage>
+      <ZeroTerminate>1</ZeroTerminate>
+      <Address>7F84880A6C04</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>149</ID>
+      <Description>"No description"</Description>
+      <VariableType>String</VariableType>
+      <Length>13</Length>
+      <Unicode>0</Unicode>
+      <CodePage>0</CodePage>
+      <ZeroTerminate>1</ZeroTerminate>
+      <Address>7F84880A6C04</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>150</ID>
+      <Description>"No description"</Description>
+      <VariableType>String</VariableType>
+      <Length>13</Length>
+      <Unicode>0</Unicode>
+      <CodePage>0</CodePage>
+      <ZeroTerminate>1</ZeroTerminate>
+      <Address>7F84880A6C04</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>151</ID>
+      <Description>"No description"</Description>
+      <VariableType>String</VariableType>
+      <Length>13</Length>
+      <Unicode>0</Unicode>
+      <CodePage>0</CodePage>
+      <ZeroTerminate>1</ZeroTerminate>
+      <Address>7F84880A6C04</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>152</ID>
+      <Description>"No description"</Description>
+      <VariableType>String</VariableType>
+      <Length>13</Length>
+      <Unicode>0</Unicode>
+      <CodePage>0</CodePage>
+      <ZeroTerminate>1</ZeroTerminate>
+      <Address>7F84880A6C5D</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>153</ID>
+      <Description>"No description"</Description>
+      <VariableType>String</VariableType>
+      <Length>13</Length>
+      <Unicode>0</Unicode>
+      <CodePage>0</CodePage>
+      <ZeroTerminate>1</ZeroTerminate>
+      <Address>7F84880A6C04</Address>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>154</ID>
+      <Description>"No description"</Description>
+      <VariableType>String</VariableType>
+      <Length>13</Length>
+      <Unicode>0</Unicode>
+      <CodePage>0</CodePage>
+      <ZeroTerminate>1</ZeroTerminate>
+      <Address>7F84880A682C</Address>
     </CheatEntry>
   </CheatEntries>
   <UserdefinedSymbols/>
@@ -1208,7 +1781,7 @@ co_dev = 0x8
 
 pointer_size = 0x8
 
-scene_manager = sig("48 83 EC 20 48 8B 2D ?? ?? ?? ?? 33 F6", 7, 7)
+scene_manager = sig("41 54 53 50 4C 8B ?5 ???????? 41 83", 7, 7)
 
 loaded_scenes = 0x8
 scene_count = 0x18
@@ -1219,9 +1792,9 @@ asset_path = 0x10
 build_index = 0x98
 root_storage_container = 0xF0
 
-prev = 0x0
-next = 0x8
-current = 0x10
+prev_node = 0x0
+next_node = 0x8
+current_node = 0x10
 
 game_object = 0x20 + (is_dev_build and go_dev or 0)
 game_object_name = 0x50 + (is_dev_build and go_dev or 0)
@@ -1230,8 +1803,10 @@ active_in_hierarchy = 0x47 + (is_dev_build and go_dev or 0)
 children = 0x48 + (is_dev_build and go_dev or 0)
 
 classes = game_object
-class_mono = 0x28 + (is_dev_build and co_dev or 0)
-class_name_mono = 0x48
+class_mono = 0x18 + (is_dev_build and co_dev or 0)
+-- has extra dereference
+-- component.m_MonoReference-&gt;raw-&gt;vtable-&gt;class-&gt;name
+class_name_mono = 0x40
 class_il2cpp = 0x18
 class_name_il2cpp = 0x10
 </LuaScript>

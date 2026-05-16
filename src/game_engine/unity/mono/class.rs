@@ -7,9 +7,9 @@ use crate::{future::retry, string::ArrayCString, Address, Error, Process};
 pub use asr_derive::MonoClass as Class;
 
 /// A .NET class that is part of an [`Image`](Image).
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Class {
-    pub(super) class: Address,
+    pub class: Address,
 }
 
 impl Class {
