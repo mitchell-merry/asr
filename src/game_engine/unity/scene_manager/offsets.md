@@ -1,7 +1,6 @@
 # todo
 
-- fix mono (v4?)
-    - check if we can get special
+- do other unity versions NOT have the extra dereference for mono object?
 - check the asr can load the classes (log 'em)
 - check the other scenes loaded
     - can we get "is loading"?
