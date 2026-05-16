@@ -83,7 +83,9 @@ impl GameObject {
             }
         };
 
-        Ok((0..number_of_components).map(move |m| Component {
+        // 0 is always Transform
+        // TODO how to read these and other default types?
+        Ok((1..number_of_components).map(move |m| Component {
             address: components[m],
         }))
     }
@@ -148,7 +150,7 @@ impl GameObject {
         process.read::<bool>(self.address + scene_manager.offsets.game_object_activeinhierarchy)
     }
 
-    /// Returns whether the game object is considered "active" by itself (irrespective of any of its
+    /// Returns whether the game object is considered "active" by itself (irrespective of its
     /// parents)
     pub fn is_active_self(
         &self,

@@ -226,6 +226,7 @@ pub struct Object {
 }
 
 impl Object {
+    /** Get the class of this object */
     pub fn get_class(&self, process: &Process, module: &Module) -> Result<Class, Error> {
         process
             // MonoVTable *vtable
