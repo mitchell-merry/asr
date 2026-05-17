@@ -205,7 +205,9 @@ class_il2cpp = 0x18
 class_name_il2cpp = 0x10
 ```
 
-## 64 bit mono
+## 64 bit mac
+
+Checked for mono and il2cpp.
 
 ```lua
 is_dev_build = false
@@ -241,5 +243,7 @@ class_mono = 0x18 + (is_dev_build and co_dev or 0)
 -- component.m_MonoReference->raw->vtable->class->name
 class_name_mono = 0x40
 class_il2cpp = 0x18
+-- also has extra dereference
+-- component.m_MonoReference->raw->vtable->class->name
 class_name_il2cpp = 0x10
 ```

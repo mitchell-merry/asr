@@ -103,16 +103,16 @@ impl Module {
             }
             #[cfg(feature = "alloc")]
             BinaryFormat::MachO => {
-                print_message("rootdonmainfge");
+                // print_message("rootdonmainfge");
                 macho::symbols(process, module_range)
                     .find(|symbol| {
-                        let name = symbol.get_name::<26>(process);
+                        // let name = symbol.get_name::<26>(process);
 
-                        if let Ok(name) = name {
-                            if let Ok(name) = name.validate_utf8() {
-                                print_message(name);
-                            }
-                        }
+                        // if let Ok(name) = name {
+                        //     if let Ok(name) = name.validate_utf8() {
+                        //         // print_message(name);
+                        //     }
+                        // }
                         symbol
                             .get_name::<26>(process)
                             .is_ok_and(|name| name.matches("_mono_assembly_foreach"))
