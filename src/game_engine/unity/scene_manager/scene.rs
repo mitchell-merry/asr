@@ -64,6 +64,6 @@ impl Scene {
         let path = self.path_as_string(process, scene_manager)?;
         // if for some reason the path has no /, or doesn't end in a .unity, just safely default
         let cs = path.rsplit_once('/').unwrap_or(("", &path)).1;
-        Ok(cs.split_once('.').unwrap_or((cs, "")).0.into())
+        Ok(cs.rsplit_once('.').unwrap_or((cs, "")).0.into())
     }
 }
