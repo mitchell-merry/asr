@@ -41,6 +41,7 @@ impl Scene {
     }
 
     /// Returns the full path of the scene, as a [String](alloc::string::String).
+    #[cfg(feature = "alloc")]
     pub fn path_as_string(
         &self,
         process: &Process,
@@ -53,6 +54,7 @@ impl Scene {
     }
 
     /// Returns the name of the scene, as a [String](alloc::string::String).
+    #[cfg(feature = "alloc")]
     pub fn name(
         &self,
         process: &Process,
