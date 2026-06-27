@@ -77,14 +77,12 @@ impl SceneManager {
             }
             _ => Some((process.get_module_range(name).ok()?, format)),
         })?;
-        print_message("b");
 
         let pointer_size = match format {
             BinaryFormat::PE => pe::MachineType::read(process, unity_player.0)?.pointer_size()?,
             BinaryFormat::ELF => elf::pointer_size(process, unity_player.0)?,
             BinaryFormat::MachO => macho::pointer_size(process, unity_player)?,
         };
-        print_message("c");
 
         let is_il2cpp = process.get_module_address("GameAssembly.dll").is_ok();
 
@@ -92,9 +90,6 @@ impl SceneManager {
         // used in the target game.
         let base_address: Address = match (pointer_size, format) {
             (PointerSize::Bit64, BinaryFormat::PE) => {
-                // let addr = SIG_64_BIT_PE.scan_process_range(process, unity_player)? + 7;
-                // addr + 0x4 + process.read::<i32>(addr).ok()?
-                print_message("dd");
                 if let Some(addr) = SIG_64_BIT_PE_1.scan_process_range(process, unity_player) {
                     print_message(&format!("dd1 {addr}"));
                     addr + 0x4 + process.read::<i32>(addr + 7).ok()?
@@ -139,7 +134,6 @@ impl SceneManager {
             .read_pointer(base_address, pointer_size)
             .ok()
             .filter(|val| !val.is_null())?;
-        print_message("g");
 
         Some(Self {
             pointer_size,
