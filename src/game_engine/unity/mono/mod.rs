@@ -10,7 +10,6 @@ use crate::{
     signature::Signature,
     Address, Address32, Address64, PointerSize, Process,
 };
-use alloc::format;
 use core::iter::{self, FusedIterator};
 
 mod assembly;
@@ -45,7 +44,6 @@ impl Module {
     /// [`attach`](Self::attach) instead.
     pub fn attach_auto_detect(process: &Process) -> Option<Self> {
         let version = Version::detect(process)?;
-        print_message(&format!("found versin {version:?}"));
         Self::attach(process, version)
     }
 

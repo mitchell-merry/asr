@@ -8,13 +8,12 @@
 
 use crate::{
     file_format::{elf, macho, pe},
-    future::retry,
-    print_message,
+    future::retry
+    ,
     signature::Signature,
     string::ArrayCString,
     Address, Address32, Error, PointerSize, Process,
 };
-use alloc::format;
 
 mod offsets;
 
@@ -91,11 +90,9 @@ impl SceneManager {
         let base_address: Address = match (pointer_size, format) {
             (PointerSize::Bit64, BinaryFormat::PE) => {
                 if let Some(addr) = SIG_64_BIT_PE_1.scan_process_range(process, unity_player) {
-                    print_message(&format!("dd1 {addr}"));
                     addr + 0x4 + process.read::<i32>(addr + 7).ok()?
                 } else if let Some(addr) = SIG_64_BIT_PE_2.scan_process_range(process, unity_player)
                 {
-                    print_message(&format!("dd2 {addr}"));
                     addr + 0x4 + process.read::<i32>(addr + 7).ok()? + 7
                 } else {
                     return None;
@@ -124,7 +121,6 @@ impl SceneManager {
                 return None;
             }
         };
-        print_message(&format!("e {base_address}"));
 
         let offsets = Offsets::new(pointer_size)?;
 
