@@ -14,18 +14,19 @@ use bytemuck::CheckedBitPattern;
 #[allow(unused)]
 enum MonoTypeKind {
     /// Non-generic type
-    DEF = 1,
+    Def = 1,
     /// Generic type definition
-    GTD = 2,
+    Gtd = 2,
     /// Generic instantiation
-    GINST = 3,
+    GInst = 3,
     /// Generic parameter
-    GPARAM = 4,
+    GParam = 4,
     /// vector or array
-    ARRAY = 5,
+    Array = 5,
     /// pointer or function pointer
-    POINTER = 6,
-    GC_FILTER = 0xAC,
+    Pointer = 6,
+    /// Not a real class kind, internal to Mono
+    GcFiller = 0xAC,
 
     #[default]
     Unknown,
@@ -65,8 +66,6 @@ impl Class {
         match module.version {
             // See https://github.com/mono/mono/blob/337052f86112fc0dc8435c5c4a2de43b399a14bb/mono/metadata/class-internals.h#L327
             Version::V2 => {
-                // TODO I feel like I'm doing this very poorly
-
                 let byte =
                     process.read::<u8>(self.class + module.offsets.class.class_kind)? & 0x7u8;
 
@@ -97,10 +96,10 @@ impl Class {
 
                 // See https://github.com/mono/mono/blob/0f53e9e151d92944cacab3e24ac359410c606df6/mono/metadata/class-accessors.c#L216
                 match class_kind {
-                    MonoTypeKind::DEF | MonoTypeKind::GTD => {
+                    MonoTypeKind::Def | MonoTypeKind::Gtd => {
                         process.read::<i32>(self.class + module.offsets.class.field_count)
                     }
-                    MonoTypeKind::GINST => {
+                    MonoTypeKind::GInst => {
                         let generic_class = process.read_pointer(
                             self.class + module.offsets.class.generic_class,
                             module.get_pointer_size(),
