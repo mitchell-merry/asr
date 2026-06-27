@@ -13,7 +13,7 @@ pub struct Class {
 }
 
 impl Class {
-    pub fn get_name<const N: usize>(
+    fn get_name<const N: usize>(
         &self,
         process: &Process,
         module: &Module,
@@ -223,11 +223,12 @@ impl Class {
  */
 #[derive(Debug, Clone)]
 pub struct Object {
+    /// The address of the Mono object.
     pub address: Address,
 }
 
 impl Object {
-    /** Get the class of this object */
+    /** Get the Mono [class](Class) of this object. */
     pub fn get_class(&self, process: &Process, module: &Module) -> Result<Class, Error> {
         process
             // MonoVTable *vtable
