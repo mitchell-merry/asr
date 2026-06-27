@@ -131,7 +131,7 @@ end
 
 # Unity 2023.1.22f1
 
-### 64 bit, Windows, Mono
+## 64 bit, Windows, Mono
 
 ```
 is_dev_build = false
@@ -164,6 +164,45 @@ children = 0x70 + (is_dev_build and go_dev or 0)
 classes = game_object
 class = 0x28 + (is_dev_build and co_dev or 0)
 class_name = 0x48
+```
+
+## 64 bit mac
+
+```lua
+is_dev_build = false
+go_dev = 0x10 -- size of EditorExtensions
+co_dev = 0x8
+
+pointer_size = 0x8
+
+scene_manager = sig("41 54 53 50 4C 8B ?5 ???????? 41 83", 7, 7)
+
+loaded_scenes = 0x8
+scene_count = 0x18
+active_scene = 0x48
+dont_destroy_on_load_scene = 0x70
+
+asset_path = 0x10
+build_index = 0x98
+root_storage_container = 0xF0
+
+prev_node = 0x0
+next_node = 0x8
+current_node = 0x10
+
+game_object = 0x30 + (is_dev_build and go_dev or 0)
+game_object_name = 0x60 + (is_dev_build and go_dev or 0)
+active_self = 0x5E + (is_dev_build and go_dev or 0)
+active_in_hierarchy = 0x5F + (is_dev_build and go_dev or 0)
+children = 0x70 + (is_dev_build and go_dev or 0)
+
+classes = game_object
+class_mono = 0x18 + (is_dev_build and co_dev or 0)
+-- has extra dereference
+-- component.m_MonoReference->raw->vtable->class->name
+class_name_mono = 0x40
+class_il2cpp = 0x18
+class_name_il2cpp = 0x10
 ```
 
 # Unity 6000.4.5f1

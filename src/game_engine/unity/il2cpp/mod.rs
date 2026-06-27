@@ -134,6 +134,7 @@ impl Module {
             const GLOBAL_METADATA: Signature<20> =
                 Signature::new("67 6C 6F 62 61 6C 2D 6D 65 74 61 64 61 74 61 2E 64 61 74 00");
             let s_metadata = GLOBAL_METADATA.scan_process_range(process, il2cpp_module)?;
+            print_message(&format!("glob"));
 
             const LEA: Signature<3> = Signature::new("48 8D 0D");
             let lea: Address = LEA
@@ -146,11 +147,13 @@ impl Module {
 
                     addr + 0x4 + offset == s_metadata
                 })?;
+            print_message(&format!("lea"));
 
             const SHR: Signature<3> = Signature::new("48 C1 E9");
             let shr: Address = SHR
                 .scan_process_range(process, (lea, 0x200))
                 .map(|addr| addr + 3)?;
+            print_message(&format!("shr"));
 
             const RAX: Signature<3> = Signature::new("48 89 05");
             RAX.scan_process_range(process, (shr, 0x100))

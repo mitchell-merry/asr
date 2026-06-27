@@ -33,12 +33,13 @@ impl Scene {
         process: &Process,
         scene_manager: &SceneManager,
     ) -> Result<ArrayCString<N>, Error> {
-        process
-            .read_pointer(
-                self.address + scene_manager.offsets.asset_path,
-                scene_manager.pointer_size,
-            )
-            .and_then(|addr| process.read(addr))
+        process.read(self.address + scene_manager.offsets.asset_path)
+        // process
+        //     .read_pointer(
+        //         self.address + scene_manager.offsets.asset_path,
+        //         scene_manager.pointer_size,
+        //     )
+        //     .and_then(|addr| process.read(addr))
     }
 
     /// Iterates over all root [`Transform`]s declared for the

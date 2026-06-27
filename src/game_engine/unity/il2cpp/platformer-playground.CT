@@ -2181,8 +2181,6 @@ function sig(sig, dispOffset)
 
     return final
 end
-
-
 is_dev_build = false
 go_dev = 0x10 -- size of EditorExtensions
 co_dev = 0x8
