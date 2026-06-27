@@ -27,13 +27,16 @@ impl Offsets {
                 dont_destroy_on_load_scene: 0x70,
                 asset_path: 0x10,
                 build_index: 0x98,
-                root_storage_container: 0xF0,
-                game_object: 0x20,
-                game_object_name: 0x50,
-                game_object_activeself: 0x46,
-                game_object_activeinhierarchy: 0x47,
+                root_storage_container: 0xB0,
+                game_object: 0x30,
+                game_object_name: 0x60,
+                // NOTE: I'm not sure what version of unity the above offsets were
+                // gotten with, so I can't get the appropriate offsets for the active
+                // fields
+                game_object_activeself: 0x0,
+                game_object_activeinhierarchy: 0x1,
                 scripting_object_handle: 0x18,
-                children_pointer: 0x48,
+                children_pointer: 0x70,
             }),
             PointerSize::Bit32 => Some(&Self {
                 scene_count: 0x10,
@@ -44,8 +47,11 @@ impl Offsets {
                 root_storage_container: 0x88,
                 game_object: 0x1C,
                 game_object_name: 0x3C,
-                game_object_activeself: 0x32,
-                game_object_activeinhierarchy: 0x33,
+                // NOTE: I'm not sure what version of unity the above offsets were
+                // gotten with, so I can't get the appropriate offsets for the active
+                // fields
+                game_object_activeself: 0x0,
+                game_object_activeinhierarchy: 0x1,
                 scripting_object_handle: 0x18,
                 children_pointer: 0x50,
             }),
