@@ -107,7 +107,7 @@ impl GameObject {
         self.components(process, scene_manager)?
             .find(|component| {
                 let val = component
-                    .get_mono_object(process, scene_manager)
+                    .get_mono_object(process, scene_manager, module)
                     .and_then(|object| object.get_class(process, module))
                     .and_then(|c| c.get_name::<CSTR>(process, module));
 
@@ -132,7 +132,11 @@ impl GameObject {
         }
 
         self.components(process, scene_manager)?
-            .filter_map(|component| component.get_mono_object(process, scene_manager).ok())
+            .filter_map(|component| {
+                component
+                    .get_mono_object(process, scene_manager, module)
+                    .ok()
+            })
             .find(|object| {
                 let val = object
                     .get_class(process, module)
