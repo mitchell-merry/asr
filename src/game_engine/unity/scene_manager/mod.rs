@@ -47,6 +47,19 @@ pub struct SceneManager {
 impl SceneManager {
     /// Attaches to the scene manager in the given process.
     pub fn attach(process: &Process) -> Option<Self> {
+        SceneManager::attach_with_offsets(process, None)
+    }
+
+    /// Attaches to the scene manager in the given process with known offsets.
+    /// Use this function if the default offsets are wrong.
+    ///
+    /// FIXME: This function is a bandaid while we don't have support for all
+    ///   scene manager versions in asr. We should remove this by supporting
+    ///   those versions without override.
+    pub fn attach_with_offsets(
+        process: &Process,
+        offsets: Option<&'static Offsets>,
+    ) -> Option<Self> {
         const SIG_64_BIT_PE_1: Signature<13> =
             Signature::new("48 83 EC 20 4C 8B ?5 ?? ?? ?? ?? 33 F6");
         const SIG_64_BIT_PE_2: Signature<13> =
@@ -121,7 +134,7 @@ impl SceneManager {
             }
         };
 
-        let offsets = Offsets::new(pointer_size)?;
+        let offsets = offsets.or_else(|| Offsets::new(pointer_size))?;
 
         // Dereferencing one level because this pointer never changes as long as the game is open.
         // It might not seem a lot, but it helps make things a bit faster when querying for scene stuff.

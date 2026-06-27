@@ -1,20 +1,20 @@
 use crate::PointerSize;
 
-pub(super) struct Offsets {
-    pub(super) scene_count: u8,
-    pub(super) active_scene: u8,
-    pub(super) dont_destroy_on_load_scene: u8,
-    pub(super) asset_path: u8,
-    pub(super) build_index: u8,
-    pub(super) root_storage_container: u8,
-    pub(super) game_object: u8,
-    pub(super) game_object_name: u8,
-    pub(super) game_object_activeself: u8,
-    pub(super) game_object_activeinhierarchy: u8,
+pub struct Offsets {
+    pub scene_count: u8,
+    pub active_scene: u8,
+    pub dont_destroy_on_load_scene: u8,
+    pub asset_path: u8,
+    pub build_index: u8,
+    pub root_storage_container: u8,
+    pub game_object: u8,
+    pub game_object_name: u8,
+    pub game_object_activeself: u8,
+    pub game_object_activeinhierarchy: u8,
     /// a handle to the scripting object
     /// MonoObjectHandle for Mono for e.g.
-    pub(super) scripting_object_handle: u8,
-    pub(super) children_pointer: u8,
+    pub scripting_object_handle: u8,
+    pub children_pointer: u8,
 }
 
 impl Offsets {
