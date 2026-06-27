@@ -15,11 +15,10 @@ use crate::{
 };
 
 mod offsets;
+pub use offsets::Offsets;
 
 mod transform;
 pub use transform::Transform;
-
-use offsets::Offsets;
 
 mod game_object;
 pub use game_object::GameObject;

@@ -221,6 +221,7 @@ impl Class {
  *
  * See https://github.com/mono/mono/blob/0f53e9e151d92944cacab3e24ac359410c606df6/mono/metadata/object.h#L31.
  */
+#[derive(Debug, Clone)]
 pub struct Object {
     pub address: Address,
 }

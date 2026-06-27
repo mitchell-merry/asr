@@ -116,6 +116,33 @@ impl GameObject {
             .ok_or(Error {})
     }
 
+    /// Get the Mono object of a  Component attached to the current `GameObject`
+    /// by name of it's class.
+    ///
+    /// For Mono.
+    pub fn get_component_mono_object(
+        &self,
+        process: &Process,
+        scene_manager: &SceneManager,
+        module: &mono::Module,
+        name: &str,
+    ) -> Result<mono::Object, Error> {
+        if scene_manager.is_il2cpp {
+            return Err(Error {});
+        }
+
+        self.components(process, scene_manager)?
+            .filter_map(|component| component.get_mono_object(process, scene_manager).ok())
+            .find(|object| {
+                let val = object
+                    .get_class(process, module)
+                    .and_then(|c| c.get_name::<CSTR>(process, module));
+
+                val.is_ok_and(|class_name| class_name.matches(name))
+            })
+            .ok_or(Error {})
+    }
+
     /// Tries to find the base address of a class in the current `GameObject` by name.
     ///
     /// IL2CPP only.
