@@ -8,8 +8,7 @@
 
 use crate::{
     file_format::{elf, macho, pe},
-    future::retry
-    ,
+    future::retry,
     signature::Signature,
     string::ArrayCString,
     Address, Address32, Error, PointerSize, Process,

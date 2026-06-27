@@ -84,7 +84,7 @@ impl GameObject {
         };
 
         // 0 is always Transform
-        // TODO how to read these and other default types?
+        // FIXME: It would be good to be able to read those components here too
         Ok((1..number_of_components).map(move |m| Component {
             address: components[m],
         }))

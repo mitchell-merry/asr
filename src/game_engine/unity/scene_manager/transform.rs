@@ -1,7 +1,5 @@
 use super::{GameObject, SceneManager, CSTR};
-use crate::{
-    string::ArrayCString, Address, Address32, Address64, Error, PointerSize, Process,
-};
+use crate::{string::ArrayCString, Address, Address32, Address64, Error, PointerSize, Process};
 use core::{array, mem::MaybeUninit};
 
 /// A `Transform` is a base class for all entities used in a Unity scene. All

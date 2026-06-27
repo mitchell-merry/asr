@@ -6,7 +6,6 @@ use crate::file_format::macho;
 use crate::{
     file_format::{elf, pe},
     future::retry,
-    print_message,
     signature::Signature,
     Address, Address32, Address64, PointerSize, Process,
 };
@@ -101,13 +100,6 @@ impl Module {
             BinaryFormat::MachO => {
                 macho::symbols(process, module_range)
                     .find(|symbol| {
-                        let name = symbol.get_name::<26>(process);
-
-                        if let Ok(name) = name {
-                            if let Ok(name) = name.validate_utf8() {
-                                print_message(name);
-                            }
-                        }
                         symbol
                             .get_name::<26>(process)
                             .is_ok_and(|name| name.matches("_mono_assembly_foreach"))
