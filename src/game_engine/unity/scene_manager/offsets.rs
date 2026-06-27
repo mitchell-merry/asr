@@ -18,6 +18,7 @@ pub struct Offsets {
 }
 
 impl Offsets {
+    // FIXME: This needs to support differentiation on unity version / binary format
     pub(super) const fn new(pointer_size: PointerSize) -> Option<&'static Self> {
         match pointer_size {
             PointerSize::Bit64 => Some(&Self {
