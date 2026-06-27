@@ -14,8 +14,6 @@ use crate::{
     Address, Address32, Error, PointerSize, Process,
 };
 
-mod game_objects;
-
 mod offsets;
 
 mod transform;
@@ -23,7 +21,13 @@ pub use transform::Transform;
 
 use offsets::Offsets;
 
+mod game_object;
+pub use game_object::GameObject;
+
+mod component;
+pub use component::Component;
 mod scene;
+
 pub use scene::Scene;
 
 use super::{BinaryFormat, CSTR};
@@ -43,8 +47,23 @@ pub struct SceneManager {
 impl SceneManager {
     /// Attaches to the scene manager in the given process.
     pub fn attach(process: &Process) -> Option<Self> {
-        const SIG_64_BIT_PE: Signature<13> =
+        SceneManager::attach_with_offsets(process, None)
+    }
+
+    /// Attaches to the scene manager in the given process with known offsets.
+    /// Use this function if the default offsets are wrong.
+    ///
+    /// FIXME: This function is a bandaid while we don't have support for all
+    ///   scene manager versions in asr. We should remove this by supporting
+    ///   those versions without override.
+    pub fn attach_with_offsets(
+        process: &Process,
+        offsets: Option<&'static Offsets>,
+    ) -> Option<Self> {
+        const SIG_64_BIT_PE_1: Signature<13> =
             Signature::new("48 83 EC 20 4C 8B ?5 ?? ?? ?? ?? 33 F6");
+        const SIG_64_BIT_PE_2: Signature<13> =
+            Signature::new("48 83 EC 20 48 8B 2D ?? ?? ?? ?? 33 F6");
         const SIG_64_BIT_ELF: Signature<13> =
             Signature::new("41 54 53 50 4C 8B ?5 ?? ?? ?? ?? 41 83");
         const SIG_64_BIT_MACHO: Signature<13> =
@@ -82,8 +101,14 @@ impl SceneManager {
         // used in the target game.
         let base_address: Address = match (pointer_size, format) {
             (PointerSize::Bit64, BinaryFormat::PE) => {
-                let addr = SIG_64_BIT_PE.scan_process_range(process, unity_player)? + 7;
-                addr + 0x4 + process.read::<i32>(addr).ok()?
+                if let Some(addr) = SIG_64_BIT_PE_1.scan_process_range(process, unity_player) {
+                    addr + 0x4 + process.read::<i32>(addr + 7).ok()?
+                } else if let Some(addr) = SIG_64_BIT_PE_2.scan_process_range(process, unity_player)
+                {
+                    addr + 0x4 + process.read::<i32>(addr + 7).ok()? + 7
+                } else {
+                    return None;
+                }
             }
             (PointerSize::Bit64, BinaryFormat::ELF) => {
                 let addr = SIG_64_BIT_ELF.scan_process_range(process, unity_player)? + 7;
@@ -109,7 +134,7 @@ impl SceneManager {
             }
         };
 
-        let offsets = Offsets::new(pointer_size)?;
+        let offsets = offsets.or_else(|| Offsets::new(pointer_size))?;
 
         // Dereferencing one level because this pointer never changes as long as the game is open.
         // It might not seem a lot, but it helps make things a bit faster when querying for scene stuff.
