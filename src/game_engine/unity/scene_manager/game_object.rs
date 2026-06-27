@@ -1,4 +1,4 @@
-use super::{SceneManager, CSTR};
+use super::{Component, SceneManager, CSTR};
 use crate::game_engine::unity::{il2cpp, mono};
 use crate::string::ArrayCString;
 use crate::{Address, Address32, Address64, Error, PointerSize, Process};
@@ -26,12 +26,12 @@ impl GameObject {
         )
     }
 
-    /// Traverse the classes associated with the Components attached to this game object.
-    pub fn classes<'a>(
+    /// Traverse the components attached to this game object.
+    pub fn components<'a>(
         &'a self,
         process: &'a Process,
         scene_manager: &'a SceneManager,
-    ) -> Result<impl Iterator<Item = Address> + 'a, Error> {
+    ) -> Result<impl Iterator<Item = Component> + 'a, Error> {
         let (number_of_components, component_pair_array): (usize, Address) =
             match scene_manager.pointer_size {
                 PointerSize::Bit64 => {
@@ -83,34 +83,32 @@ impl GameObject {
             }
         };
 
-        Ok((1..number_of_components).filter_map(move |m| {
-            process
-                .read_pointer(
-                    components[m] + scene_manager.offsets.klass,
-                    scene_manager.pointer_size,
-                )
-                .ok()
-                .filter(|val| !val.is_null())
+        // 0 is always Transform
+        // TODO how to read these and other default types?
+        Ok((1..number_of_components).map(move |m| Component {
+            address: components[m],
         }))
     }
 
-    /// Tries to find the base address of a class in the current `GameObject` by name.
+    /// Get a Component attached to the current `GameObject` by name of it's class.
     ///
-    /// Mono only.
-    pub fn get_class_mono(
+    /// For Mono.
+    pub fn get_component_mono(
         &self,
         process: &Process,
         scene_manager: &SceneManager,
         module: &mono::Module,
         name: &str,
-    ) -> Result<Address, Error> {
+    ) -> Result<Component, Error> {
         if scene_manager.is_il2cpp {
             return Err(Error {});
         }
 
-        self.classes(process, scene_manager)?
-            .find(|&addr| {
-                let val = mono::Class::get_from_component(process, module, addr)
+        self.components(process, scene_manager)?
+            .find(|component| {
+                let val = component
+                    .get_mono_object(process, scene_manager)
+                    .and_then(|object| object.get_class(process, module))
                     .and_then(|c| c.get_name::<CSTR>(process, module));
 
                 val.is_ok_and(|class_name| class_name.matches(name))
@@ -127,14 +125,14 @@ impl GameObject {
         scene_manager: &SceneManager,
         module: &il2cpp::Module,
         name: &str,
-    ) -> Result<Address, Error> {
+    ) -> Result<Component, Error> {
         if !scene_manager.is_il2cpp {
             return Err(Error {});
         }
 
-        self.classes(process, scene_manager)?
-            .find(|&addr| {
-                let val = il2cpp::Class::get_from_component(process, module, addr)
+        self.components(process, scene_manager)?
+            .find(|comp| {
+                let val = il2cpp::Class::get_from_component(process, module, comp.address)
                     .and_then(|c| c.get_name::<CSTR>(process, module));
 
                 val.is_ok_and(|class_name| class_name.matches(name))
@@ -152,7 +150,7 @@ impl GameObject {
         process.read::<bool>(self.address + scene_manager.offsets.game_object_activeinhierarchy)
     }
 
-    /// Returns whether the game object is considered "active" by itself (irrespective of any of its
+    /// Returns whether the game object is considered "active" by itself (irrespective of its
     /// parents)
     pub fn is_active_self(
         &self,

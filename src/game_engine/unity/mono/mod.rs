@@ -6,9 +6,11 @@ use crate::file_format::macho;
 use crate::{
     file_format::{elf, pe},
     future::retry,
+    print_message,
     signature::Signature,
     Address, Address32, Address64, PointerSize, Process,
 };
+use alloc::format;
 use core::iter::{self, FusedIterator};
 
 mod assembly;
@@ -16,7 +18,7 @@ use assembly::Assembly;
 mod image;
 pub use image::Image;
 mod class;
-pub use class::Class;
+pub use class::{Class, Object};
 mod field;
 use field::Field;
 mod version;
@@ -43,6 +45,7 @@ impl Module {
     /// [`attach`](Self::attach) instead.
     pub fn attach_auto_detect(process: &Process) -> Option<Self> {
         let version = Version::detect(process)?;
+        print_message(&format!("found versin {version:?}"));
         Self::attach(process, version)
     }
 
@@ -51,6 +54,7 @@ impl Module {
     /// correct for this function to work. If you don't know the version in
     /// advance, use [`attach_auto_detect`](Self::attach_auto_detect) instead.
     pub fn attach(process: &Process, version: Version) -> Option<Self> {
+        print_message("ok!");
         let (module_range, format) = [
             ("mono.dll", BinaryFormat::PE),
             ("libmono.so", BinaryFormat::ELF),
@@ -63,6 +67,7 @@ impl Module {
         ]
         .into_iter()
         .find_map(|(name, format)| Some((process.get_module_range(name).ok()?, format)))?;
+        print_message("not even");
 
         let (mono_module, _) = module_range;
 
@@ -98,8 +103,16 @@ impl Module {
             }
             #[cfg(feature = "alloc")]
             BinaryFormat::MachO => {
+                // print_message("rootdonmainfge");
                 macho::symbols(process, module_range)
                     .find(|symbol| {
+                        // let name = symbol.get_name::<26>(process);
+
+                        // if let Ok(name) = name {
+                        //     if let Ok(name) = name.validate_utf8() {
+                        //         // print_message(name);
+                        //     }
+                        // }
                         symbol
                             .get_name::<26>(process)
                             .is_ok_and(|name| name.matches("_mono_assembly_foreach"))
@@ -109,6 +122,7 @@ impl Module {
             #[allow(unreachable_patterns)]
             _ => return None,
         };
+        print_message("assemlyes");
 
         let assemblies: Address = match (pointer_size, format) {
             (PointerSize::Bit64, BinaryFormat::PE) => {
@@ -127,6 +141,7 @@ impl Module {
             }
             #[cfg(feature = "alloc")]
             (PointerSize::Bit64, BinaryFormat::MachO) => {
+                print_message("ok lets do this");
                 const SIG_MONO_X86_64_MACHO: Signature<3> = Signature::new("48 8B 3D");
                 // 57 0f 00 d0   adrp  x23,(page + 0x1ea000)
                 // e0 da 47 f9   ldr   x0,[x23, #0xfb0]=>(page + 0x1eafb0)
@@ -150,10 +165,12 @@ impl Module {
                     .scan_process_range(process, (root_domain_function_address, 0x100))
                     .map(|a| a + 3)
                 {
+                    print_message("yay");
                     scan_address + 0x4 + process.read::<i32>(scan_address).ok()?
                 } else if let Some(scan_address) = SIG_MONO_ARM_64_MACHO
                     .scan_process_range(process, (root_domain_function_address, 0x100))
                 {
+                    print_message("what");
                     let page = scan_address.value() & 0xfffffffffffff000;
                     let bs = process.read::<[u8; 8]>(scan_address).ok()?;
                     // adrp
@@ -168,6 +185,7 @@ impl Module {
                     let ldr = (i0 << 3) | (i1 << 9);
                     (page + adrp + ldr).into()
                 } else {
+                    print_message("got hands.");
                     return None;
                 }
             }
@@ -183,6 +201,8 @@ impl Module {
             }
             _ => return None,
         };
+
+        print_message("attached");
 
         Some(Self {
             assemblies,

@@ -11,7 +11,9 @@ pub(super) struct Offsets {
     pub(super) game_object_name: u8,
     pub(super) game_object_activeself: u8,
     pub(super) game_object_activeinhierarchy: u8,
-    pub(super) klass: u8,
+    /// a handle to the scripting object
+    /// MonoObjectHandle for Mono for e.g.
+    pub(super) scripting_object_handle: u8,
     pub(super) children_pointer: u8,
 }
 
@@ -24,12 +26,12 @@ impl Offsets {
                 dont_destroy_on_load_scene: 0x70,
                 asset_path: 0x10,
                 build_index: 0x98,
-                root_storage_container: 0xB0,
+                root_storage_container: 0xF0,
                 game_object: 0x30,
                 game_object_name: 0x60,
                 game_object_activeself: 0x5E,
                 game_object_activeinhierarchy: 0x5F,
-                klass: 0x28,
+                scripting_object_handle: 0x18,
                 children_pointer: 0x70,
             }),
             PointerSize::Bit32 => Some(&Self {
@@ -43,7 +45,7 @@ impl Offsets {
                 game_object_name: 0x3C,
                 game_object_activeself: 0x32,
                 game_object_activeinhierarchy: 0x33,
-                klass: 0x18,
+                scripting_object_handle: 0x18,
                 children_pointer: 0x50,
             }),
             _ => None,
