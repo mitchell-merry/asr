@@ -9,11 +9,13 @@ pub use asr_derive::MonoClass as Class;
 /// A .NET class that is part of an [`Image`](Image).
 #[derive(Copy, Clone, Debug)]
 pub struct Class {
+    /// The address of the class
     pub class: Address,
 }
 
 impl Class {
-    fn get_name<const N: usize>(
+    /// Get the name of the class
+    pub fn get_name<const N: usize>(
         &self,
         process: &Process,
         module: &Module,
