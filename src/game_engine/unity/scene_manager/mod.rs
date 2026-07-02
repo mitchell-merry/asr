@@ -111,7 +111,7 @@ impl SceneManager {
             let base_address: Address = match (pointer_size, format) {
                 (PointerSize::Bit64, BinaryFormat::PE) => {
                     if let Some(addr) = SIG_64_BIT_PE_1.scan_process_range(process, unity_player) {
-                        addr + 0x4 + process.read::<i32>(addr + 7).ok()?
+                        addr + 0x4 + process.read::<i32>(addr + 7).ok()? + 7
                     } else if let Some(addr) =
                         SIG_64_BIT_PE_2.scan_process_range(process, unity_player)
                     {
