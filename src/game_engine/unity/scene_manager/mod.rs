@@ -36,6 +36,7 @@ use super::{BinaryFormat, CSTR};
 ///
 /// It can be useful to identify splitting conditions or as an alternative to
 /// the traditional class lookup in games with no useful static references.
+#[derive(Clone)]
 pub struct SceneManager {
     pointer_size: PointerSize,
     is_il2cpp: bool,

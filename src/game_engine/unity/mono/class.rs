@@ -1,13 +1,14 @@
+use alloc::format;
 use core::iter::{self, FusedIterator};
 
 use super::{super::get_backing_name, Field, Module, Version, CSTR};
-use crate::{future::retry, string::ArrayCString, Address, Error, Process};
+use crate::{future::retry, print_message, string::ArrayCString, Address, Error, Process};
 
 #[cfg(feature = "derive")]
 pub use asr_derive::MonoClass as Class;
 
 /// A .NET class that is part of an [`Image`](Image).
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Class {
     pub(super) class: Address,
 }
@@ -47,6 +48,35 @@ impl Class {
             .and_then(|addr| process.read(addr))
     }
 
+    fn field_count(&self, process: &Process, module: &Module) -> Result<i32, Error> {
+        match module.version {
+            Version::V1 | Version::V1Cattrs => {
+                process.read::<i32>(self.class + module.offsets.class.field_count)
+            }
+            Version::V3 => {
+                // https://github.com/mono/mono/blob/0f53e9e151d92944cacab3e24ac359410c606df6/mono/metadata/class-accessors.c#L216
+                let class_kind = process.read::<u8>(self.class + 0x1B)?;
+                print_message(&format!("class kind {}", class_kind));
+
+                match class_kind {
+                    1 | 2 => process.read::<i32>(self.class + module.offsets.class.field_count),
+                    3 => {
+                        let generic_class =
+                            process.read_pointer(self.class + 0xB0, module.get_pointer_size())?;
+                        let container_class = Class {
+                            class: process
+                                .read_pointer(generic_class + 0x0, module.get_pointer_size())?,
+                        };
+
+                        container_class.field_count(process, module)
+                    }
+                    _ => Err(Error {}),
+                }
+            }
+            _ => Err(Error {}),
+        }
+    }
+
     fn fields<'a>(
         &'a self,
         process: &'a Process,
@@ -56,6 +86,7 @@ impl Class {
 
         iter::from_fn(move || {
             let class = this_class?;
+            print_message("ongo");
 
             if class
                 .get_name::<CSTR>(process, module)
@@ -71,12 +102,17 @@ impl Class {
 
             // Prepare for next iteration
             this_class = class.get_parent(process, module);
+            print_message(&format!("bongo {:X?}", class.class));
 
-            let field_count = process
-                .read::<i32>(class.class + module.offsets.class.field_count)
+            let field_count = class
+                .field_count(process, module)
                 .ok()
                 .filter(|&val| val > 0)
                 .unwrap_or_default();
+            print_message(&format!(
+                "congo {:X?} {:X?}",
+                module.offsets.class.field_count, field_count
+            ));
 
             let fields = match field_count {
                 0 => None,
@@ -87,6 +123,7 @@ impl Class {
                     )
                     .ok(),
             };
+            print_message(&format!("dongo {:X?}", fields));
 
             Some((0..field_count as u64).filter_map(move |i| {
                 fields.map(|fields| Field {
@@ -110,6 +147,10 @@ impl Class {
         self.fields(process, module)
             .find(|field| {
                 field.get_name::<CSTR>(process, module).is_ok_and(|name| {
+                    // print_message(&format!(
+                    //     "field {}",
+                    //     name.validate_utf8().unwrap_or_default()
+                    // ));
                     // If the name matches, return immediately
                     name.matches(field_name)
 
